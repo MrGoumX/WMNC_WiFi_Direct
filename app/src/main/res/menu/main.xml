@@ -5,11 +5,18 @@
     <item
         android:id="@+id/con_status"
         app:showAsAction="always" />
+
     <item
         android:id="@+id/wifi"
         android:title="Enable/Disable WiFi"
         app:showAsAction="always"
         android:icon="@drawable/wifi"/>
+
+    <item
+        android:id="@+id/direct"
+        android:title="Enable/Disable WiFi Direct"
+        app:showAsAction="always"
+        android:icon="@drawable/direct"/>
 
     <item
         android:id="@+id/refresh"

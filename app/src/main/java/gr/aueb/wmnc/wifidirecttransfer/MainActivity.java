@@ -119,6 +119,9 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "WiFi: Enabled", Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case R.id.direct:
+                //TODO ENABLE/DISABLE WIFI P2P
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
