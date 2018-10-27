@@ -1,5 +1,6 @@
 package gr.aueb.wmnc.wifidirecttransfer;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,16 +20,15 @@ public class WiFiDirectBR extends BroadcastReceiver {
 
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
-    private Fragment mActivity;
-    private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
-    private String[] deviceNames;
-    private WifiP2pDevice[] devices;
+    private Activity mActivity;
+    private SettingsFrag fragment;
     private int state;
 
-    public WiFiDirectBR(WifiP2pManager mManager, WifiP2pManager.Channel mChannel, Fragment mainActivity){
+    public WiFiDirectBR(WifiP2pManager mManager, WifiP2pManager.Channel mChannel, Activity mainActivity, SettingsFrag fragment){
         this.mManager = mManager;
         this.mChannel = mChannel;
         this.mActivity = mainActivity;
+        this.fragment = fragment;
     }
 
     @Override
@@ -44,9 +44,10 @@ public class WiFiDirectBR extends BroadcastReceiver {
             }
         }
         else if(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)){
+            System.out.println("here2");
             if(mManager != null){
-                System.out.println("Here");
-                mManager.requestPeers(mChannel, ((SettingsFrag)mActivity).peerList);
+                System.out.println("here");
+                mManager.requestPeers(mChannel, fragment.peerList);
             }
 
         }
@@ -56,7 +57,7 @@ public class WiFiDirectBR extends BroadcastReceiver {
             }
             NetworkInfo info = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
             if(info.isConnected()){
-                mManager.requestConnectionInfo(mChannel, ((SettingsFrag)mActivity).connectionInfoListener);
+                mManager.requestConnectionInfo(mChannel, fragment.connectionInfoListener);
             }
             else{
                 Toast.makeText(context, "Disconnected", Toast.LENGTH_SHORT).show();

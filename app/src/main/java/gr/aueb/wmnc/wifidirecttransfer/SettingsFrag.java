@@ -1,9 +1,11 @@
 package gr.aueb.wmnc.wifidirecttransfer;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.hardware.SensorManager;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -26,8 +28,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.net.InetAddress;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.os.Looper.getMainLooper;
 
 public class SettingsFrag extends Fragment {
 
@@ -42,27 +47,16 @@ public class SettingsFrag extends Fragment {
     private ListView listView;
     private View view;
     private Menu menu;
+    private Activity parent;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.settings_frag, container, false);
 
-        intentFilter = new IntentFilter();
-
         listView = (ListView)view.findViewById(R.id.device_list);
 
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-
-        mManager = (WifiP2pManager) getActivity().getSystemService(Context.WIFI_P2P_SERVICE);
-        mChannel = mManager.initialize(getActivity(), getActivity().getMainLooper(), null);
-        wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        mReceiver = new WiFiDirectBR(mManager, mChannel, this);
-
-        peers = new ArrayList<>();
+        setHasOptionsMenu(true);
 
         restOfAction();
 
@@ -71,28 +65,43 @@ public class SettingsFrag extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
+        menu.findItem(R.id.refresh).setVisible(true);
+        menu.findItem(R.id.refresh).setEnabled(true);
         this.menu = menu;
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if(id == R.id.refresh){
+            discover();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void restOfAction() {
-        mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
+        intentFilter = new IntentFilter();
 
-                Toast.makeText(getActivity().getApplicationContext(), "Discovery Started", Toast.LENGTH_SHORT).show();
+        parent = this.getActivity();
 
-            }
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+        mManager = (WifiP2pManager) parent.getSystemService(Context.WIFI_P2P_SERVICE);
+        mChannel = mManager.initialize(parent, getMainLooper(), null);
+        //mChannel = mManager.initialize(parent.getApplicationContext(), getMainLooper(), null);
+        wifiManager = (WifiManager) parent.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        mReceiver = new WiFiDirectBR(mManager, mChannel, parent, this);
 
-            @Override
-            public void onFailure(int reason) {
-                Toast.makeText(getActivity().getApplicationContext(), "Discovery Failed", Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        peers = new ArrayList<>();
+        //discover();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
                 final WifiP2pDevice device = devices[position];
                 WifiP2pConfig config = new WifiP2pConfig();
                 config.deviceAddress = device.deviceAddress;
@@ -100,14 +109,43 @@ public class SettingsFrag extends Fragment {
                 mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
                     @Override
                     public void onSuccess() {
-                        Toast.makeText(getActivity().getApplicationContext(), "Connected to " + device.deviceName, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(parent.getContext(), "Connected to " + device.deviceName, Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onFailure(int reason) {
-                        Toast.makeText(getActivity().getApplicationContext(), "Connection falied", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(parent.getContext(), "Connection falied", Toast.LENGTH_SHORT).show();
                     }
                 });
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mReceiver = new WiFiDirectBR(mManager, mChannel, parent, this);
+        parent.registerReceiver(mReceiver, intentFilter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        parent.unregisterReceiver(mReceiver);
+    }
+
+    private void discover(){
+        mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+
+                Toast.makeText(parent.getApplicationContext(), "Discovery Started", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onFailure(int reason) {
+                Toast.makeText(parent.getApplicationContext(), "Discovery Failed", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -146,11 +184,11 @@ public class SettingsFrag extends Fragment {
                     devices[k] = i;
                     k++;
                 }
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, deviceNames);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(parent.getApplicationContext(), android.R.layout.simple_list_item_1, deviceNames);
                 listView.setAdapter(adapter);
             }
             if(peers.size() == 0){
-                Toast.makeText(getActivity().getApplicationContext(), "No devices found", Toast.LENGTH_SHORT).show();
+                Toast.makeText(parent.getApplicationContext(), "No devices found", Toast.LENGTH_SHORT).show();
                 return;
             }
         }

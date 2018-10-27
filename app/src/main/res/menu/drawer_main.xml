@@ -13,10 +13,11 @@
         android:title="Enable/Disable WiFi"
         app:showAsAction="always"
         android:icon="@drawable/wifi"/>
-
     <item
         android:id="@+id/refresh"
-        android:title="Search"
+        android:visible="false"
+        android:enabled="false"
+        android:title="Refresh Peers"
         app:showAsAction="always"
         android:icon="@drawable/refresh"/>
 </menu>

@@ -85,9 +85,6 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
                 Toast.makeText(getApplicationContext(), "WiFi: Enabled", Toast.LENGTH_SHORT).show();
             }
         }
-        else if(id == R.id.refresh){
-
-        }
 
         return super.onOptionsItemSelected(item);
     }
