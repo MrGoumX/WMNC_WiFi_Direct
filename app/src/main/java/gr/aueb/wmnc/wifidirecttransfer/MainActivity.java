@@ -51,10 +51,10 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 0;
 
-    //@RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -62,10 +62,8 @@ public class MainActivity extends AppCompatActivity {
                         PERMISSION_ACCESS_COARSE_LOCATION);
             }
         }
-        setContentView(R.layout.activity_main);
 
         intentFilter = new IntentFilter();
-	
 
         listView = (ListView)findViewById(R.id.device_list);
 
@@ -170,9 +168,13 @@ public class MainActivity extends AppCompatActivity {
             MenuItem item = menu.findItem(R.id.con_status);
             if(info.groupFormed && info.isGroupOwner) {
                 item.setTitle("Host");
+                Server server = new Server();
+                server.execute();
             }
             else {
                 item.setTitle("Client");
+                Client client = new Client();
+                client.execute(owner.toString());
             }
         }
     };
