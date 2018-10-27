@@ -4,8 +4,22 @@
     <string name="title_activity_main3">Main3Activity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">WMNC</string>
+    <string name="nav_header_subtitle">Athens University of Economics and Business</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_drawer_main">DrawerMain</string>
+    <string name="info">Welcome to our WMNC App.\n In this App we explore the capabolities of WiFi Direct.\n First you need to connect to an available peer via the Settings tab.\n After that you can test the rest of the mini applications.</string>
+    <string name="person1_name">Christos Gkoumas</string>
+    <string name="person2_name">Marios Prokopakis</string>
+    <string name="person3_name">Giorgos Chatzopoulos</string>
+    <string name="person1_am">3160026</string>
+    <string name="person2_am">3150141 </string>
+    <string name="person3_am">3150196</string>
+    <string name="person1_email"><a href="p3160026@aueb.gr">p3160026@aueb.gr</a></string>
+    <string name="person2_email"><a href="p3160026@aueb.gr">p3150141@aueb.gr</a></string>
+    <string name="person3_email"><a href="p3160026@aueb.gr">p3150196@aueb.gr</a></string>
+    <string name="person1_github"><a href="https://github.com/MrGoumX">https://github.com/MrGoumX</a></string>
+    <string name="person2_github"><a href="https://github.com/marprok">https://github.com/marprok</a></string>
+    <string name="person3_github"><a href="https://github.com/GeorgeChatzo">https://github.com/GeorgeChatzo</a></string>
 </resources>
