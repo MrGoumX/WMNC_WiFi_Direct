@@ -7,6 +7,8 @@ import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -17,13 +19,13 @@ public class WiFiDirectBR extends BroadcastReceiver {
 
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
-    private MainActivity mActivity;
+    private Fragment mActivity;
     private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
     private String[] deviceNames;
     private WifiP2pDevice[] devices;
     private int state;
 
-    public WiFiDirectBR(WifiP2pManager mManager, WifiP2pManager.Channel mChannel, MainActivity mainActivity){
+    public WiFiDirectBR(WifiP2pManager mManager, WifiP2pManager.Channel mChannel, Fragment mainActivity){
         this.mManager = mManager;
         this.mChannel = mChannel;
         this.mActivity = mainActivity;
@@ -44,7 +46,7 @@ public class WiFiDirectBR extends BroadcastReceiver {
         else if(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)){
             if(mManager != null){
                 System.out.println("Here");
-                mManager.requestPeers(mChannel, mActivity.peerList);
+                mManager.requestPeers(mChannel, ((SettingsFrag)mActivity).peerList);
             }
 
         }
@@ -54,7 +56,7 @@ public class WiFiDirectBR extends BroadcastReceiver {
             }
             NetworkInfo info = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
             if(info.isConnected()){
-                mManager.requestConnectionInfo(mChannel, mActivity.connectionInfoListener);
+                mManager.requestConnectionInfo(mChannel, ((SettingsFrag)mActivity).connectionInfoListener);
             }
             else{
                 Toast.makeText(context, "Disconnected", Toast.LENGTH_SHORT).show();

@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //USED FOR DRAWER TESTING
-        /*Intent drawer = new Intent(this, DrawerMain.class);
-        startActivity(drawer);*/
+        Intent drawer = new Intent(this, DrawerMain.class);
+        startActivity(drawer);
 
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        mReceiver = new WiFiDirectBR(mManager, mChannel, this);
+        //mReceiver = new WiFiDirectBR(mManager, mChannel, this);
 
         peers = new ArrayList<>();
 
@@ -152,17 +152,17 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+    /*@Override
     protected void onResume(){
         super.onResume();
         mReceiver = new WiFiDirectBR(mManager, mChannel, this);
         registerReceiver(mReceiver, intentFilter);
-    }
+    }*/
 
     @Override
     public void onPause(){
         super.onPause();
-        unregisterReceiver(mReceiver);
+        //unregisterReceiver(mReceiver);
     }
 
     WifiP2pManager.ConnectionInfoListener connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {

@@ -20,23 +20,23 @@
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="Settings" />
-    </group>
 
-    <item android:title="People">
-        <menu>
-            <item
-                android:id="@+id/nav_person1"
-                android:icon="@drawable/ic_person_black_24dp"
-                android:title="Christos Gkoumas" />
-            <item
-                android:id="@+id/nav_person2"
-                android:icon="@drawable/ic_person_black_24dp"
-                android:title="Marios Prokopakis" />
-            <item
-                android:id="@+id/nav_person3"
-                android:icon="@drawable/ic_person_black_24dp"
-                android:title="Giorgos Chatzopoulos" />
-        </menu>
-    </item>
+        <item android:title="People">
+            <menu>
+                <item
+                    android:id="@+id/nav_person1"
+                    android:icon="@drawable/ic_person_black_24dp"
+                    android:title="@string/person1_name" />
+                <item
+                    android:id="@+id/nav_person2"
+                    android:icon="@drawable/ic_person_black_24dp"
+                    android:title="@string/person2_name" />
+                <item
+                    android:id="@+id/nav_person3"
+                    android:icon="@drawable/ic_person_black_24dp"
+                    android:title="@string/person3_name" />
+            </menu>
+        </item>
+    </group>
 
 </menu>

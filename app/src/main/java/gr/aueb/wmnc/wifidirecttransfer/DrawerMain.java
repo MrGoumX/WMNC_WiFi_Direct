@@ -1,5 +1,11 @@
 package gr.aueb.wmnc.wifidirecttransfer;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
+import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,9 +18,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
+import android.widget.Toast;
 
-public class DrawerMain extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import java.util.ArrayList;
+import java.util.List;
+
+public class DrawerMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private WifiManager wifiManager;
+    private static final int PERMISSION_ACCESS_COARSE_LOCATION = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +46,8 @@ public class DrawerMain extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment, new InfoFrag()).commit();
+
+        wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
     }
 
     @Override
@@ -61,7 +76,14 @@ public class DrawerMain extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.wifi) {
-            return true;
+            if(wifiManager.isWifiEnabled()){
+                wifiManager.setWifiEnabled(false);
+                Toast.makeText(getApplicationContext(), "WiFi: Disabled", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                wifiManager.setWifiEnabled(true);
+                Toast.makeText(getApplicationContext(), "WiFi: Enabled", Toast.LENGTH_SHORT).show();
+            }
         }
         else if(id == R.id.refresh){
 
