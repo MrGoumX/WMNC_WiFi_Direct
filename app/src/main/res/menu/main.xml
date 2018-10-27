@@ -13,12 +13,6 @@
         android:icon="@drawable/wifi"/>
 
     <item
-        android:id="@+id/direct"
-        android:title="Enable/Disable WiFi Direct"
-        app:showAsAction="always"
-        android:icon="@drawable/direct"/>
-
-    <item
         android:id="@+id/refresh"
         android:title="Search"
         app:showAsAction="always"
