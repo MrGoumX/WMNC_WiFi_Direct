@@ -62,8 +62,12 @@ public class MainActivity extends AppCompatActivity {
                         PERMISSION_ACCESS_COARSE_LOCATION);
             }
         }
+        setContentView(R.layout.activity_main);
 
         intentFilter = new IntentFilter();
+	
+
+        listView = (ListView)findViewById(R.id.device_list);
 
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -81,8 +85,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void restOfAction(){
-        listView = (ListView)findViewById(R.id.devices);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final WifiP2pDevice device = devices[position];
+                WifiP2pConfig config = new WifiP2pConfig();
+                config.deviceAddress = device.deviceAddress;
 
+                mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(getApplicationContext(), "Connected to " + device.deviceName, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(int reason) {
+                        Toast.makeText(getApplicationContext(), "Connection falied", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -109,28 +131,6 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Discovery Failed", Toast.LENGTH_SHORT).show();
                     }
                 });
-                if(!peers.isEmpty()){
-                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            final WifiP2pDevice device = devices[position];
-                            WifiP2pConfig config = new WifiP2pConfig();
-                            config.deviceAddress = device.deviceAddress;
-
-                            mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
-                                @Override
-                                public void onSuccess() {
-                                    Toast.makeText(getApplicationContext(), "Connected to " + device.deviceName, Toast.LENGTH_SHORT).show();
-                                }
-
-                                @Override
-                                public void onFailure(int reason) {
-                                    Toast.makeText(getApplicationContext(), "Connection falied", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    });
-                }
 
                 break;
 
