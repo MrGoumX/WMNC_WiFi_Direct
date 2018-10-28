@@ -53,7 +53,6 @@ public class WiFiDirectReceiver extends BroadcastReceiver {
                 fragment.addItemsToUI();
             }
             else{
-                Toast.makeText(context, "Disconnected", Toast.LENGTH_SHORT).show();
                 fragment.removeItemsFromUI();
             }
         }
