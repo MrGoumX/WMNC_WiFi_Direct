@@ -1,3 +1,4 @@
+/*
 package gr.aueb.wmnc.wifidirecttransfer;
 
 import android.Manifest;
@@ -152,7 +153,8 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /*@Override
+    */
+/*@Override
     protected void onResume(){
         super.onResume();
         mReceiver = new WiFiDirectBR(mManager, mChannel, this, null);
@@ -163,7 +165,8 @@ public class MainActivity extends AppCompatActivity {
     public void onPause(){
         super.onPause();
         unregisterReceiver(mReceiver);
-    }*/
+    }*//*
+
 
     WifiP2pManager.ConnectionInfoListener connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
         @SuppressLint("RestrictedApi")
@@ -210,3 +213,4 @@ public class MainActivity extends AppCompatActivity {
     };
 
 }
+*/
