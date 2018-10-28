@@ -1,3 +1,4 @@
+/*
 package gr.aueb.wmnc.wifidirecttransfer;
 
 import android.app.Activity;
@@ -70,4 +71,4 @@ public class WiFiDirectBR extends BroadcastReceiver {
         return state;
     }
 
-}
+}*/

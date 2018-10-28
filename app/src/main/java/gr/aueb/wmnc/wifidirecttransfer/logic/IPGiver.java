@@ -29,9 +29,7 @@ public class IPGiver extends AsyncTask<Void, Void, phonesIps> {
             clientIp = socket.getInetAddress().toString();
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
-            // wait for my ip
             myIp = (String)in.readObject();
-            myIp = myIp.substring(1);
             // send his ip back to him
             out.writeObject(clientIp);
             out.flush();

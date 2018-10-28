@@ -18,6 +18,8 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
     private WifiManager wifiManager;
     private String what;
     private phonesIps phonesIps;
+    private InfoFrag infoFrag;
+    private SettingsFrag settingsFrag;
     protected Menu menu;
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 0; // It is necessary for device scanning
                                                                     // after Android version 7 and on
@@ -42,6 +44,9 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment, new InfoFrag()).commit();
 
         wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        infoFrag = new InfoFrag();
+        settingsFrag = new SettingsFrag();
     }
 
     @Override
@@ -87,8 +92,6 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        InfoFrag infoFrag = new InfoFrag();
-        SettingsFrag settingsFrag = new SettingsFrag();
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -127,13 +130,14 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
 
     @Override
     public void onConnectionInfo(String what, phonesIps phonesIps) {
-        System.out.println(menu.getItem(R.id.con_status));
         this.what = what;
         this.phonesIps = phonesIps;
         if(this.what == null && this.phonesIps == null){
             Toast.makeText(getApplicationContext(), "Error: No connection established", Toast.LENGTH_SHORT).show();
         }
         else{
+            System.out.println(phonesIps.getServerIp());
+            System.out.println(phonesIps.getClientIp());
             menu.findItem(R.id.con_status).setVisible(true);
             menu.findItem(R.id.con_status).setTitle(this.what);
         }

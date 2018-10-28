@@ -105,6 +105,10 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
                         Toast.makeText(parent.getApplicationContext(), "Disconnect Failed", Toast.LENGTH_SHORT).show();
                     }
                 });
+                menu.findItem(R.id.con_status).setTitle("");
+                menu.findItem(R.id.con_status).setVisible(false);
+                menu.findItem(R.id.cancel).setVisible(false);
+                menu.findItem(R.id.cancel).setEnabled(false);
             }
         }
         return super.onOptionsItemSelected(item);
@@ -196,8 +200,8 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
                     server.execute();
                 }
                 else {
-                    item.setTitle("IPRequester");
-                    temp.what = "IPRequester";
+                    item.setTitle("Guest");
+                    temp.what = "Guest";
                     IPRequester client = new IPRequester();
                     client.bind = temp;
                     client.execute(owner.toString());

@@ -30,13 +30,14 @@ public class IPRequester extends AsyncTask<String, Void, phonesIps> {
         if (strings.length == 0)
             return null;
         try{
-            System.out.println(strings[0].substring(1));
             // create the socket and initialize the streams
             socket = new Socket(strings[0].substring(1), 4200);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
+            //TODO THERE WAS THE PROBLEM
+            server = socket.getInetAddress().toString().substring(1);
             // send the GroupOwner ip to initialize the protocol
-            out.writeObject(server);
+            out.writeObject(strings[0].substring(1));
             out.flush();
             // receive our ip address
             client = (String)in.readObject();
@@ -58,7 +59,8 @@ public class IPRequester extends AsyncTask<String, Void, phonesIps> {
             }
         }
 
-        ips = new phonesIps(socket.getInetAddress().toString(), client);
+        //TODO HERE YOU GOT THE STRING FROM THE SOCKET BUT THE SOCKET WAS CLOSED SO IT PRODUCED NULLPOINTEREXCEPTION
+        ips = new phonesIps(server, client);
         return ips;
     }
 
