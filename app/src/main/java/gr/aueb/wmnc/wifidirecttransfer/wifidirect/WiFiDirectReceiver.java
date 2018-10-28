@@ -50,10 +50,11 @@ public class WiFiDirectReceiver extends BroadcastReceiver {
             NetworkInfo info = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
             if(info.isConnected()){
                 mManager.requestConnectionInfo(mChannel, fragment.getConnectionInfoListener());
+                fragment.addItemsToUI();
             }
             else{
                 Toast.makeText(context, "Disconnected", Toast.LENGTH_SHORT).show();
-
+                fragment.removeItemsFromUI();
             }
         }
         else if(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)){

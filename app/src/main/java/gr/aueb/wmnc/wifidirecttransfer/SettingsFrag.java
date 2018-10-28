@@ -53,7 +53,7 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
     private Activity parent;
     private phonesIps phonesIps;
     private SettingsFrag temp;
-    private String what;
+    private String type;
     private boolean connected = false;
 
     @Nullable
@@ -105,10 +105,7 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
                         Toast.makeText(parent.getApplicationContext(), "Disconnect Failed", Toast.LENGTH_SHORT).show();
                     }
                 });
-                menu.findItem(R.id.con_status).setTitle("");
-                menu.findItem(R.id.con_status).setVisible(false);
-                menu.findItem(R.id.cancel).setVisible(false);
-                menu.findItem(R.id.cancel).setEnabled(false);
+                connected = false;
             }
         }
         return super.onOptionsItemSelected(item);
@@ -190,26 +187,20 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
         @Override
         public void onConnectionInfoAvailable(WifiP2pInfo info) {
             final InetAddress owner = info.groupOwnerAddress;
-            MenuItem item = menu.findItem(R.id.con_status);
             if(!connected){
                 if(info.groupFormed && info.isGroupOwner) {
-                    item.setTitle("Host");
-                    temp.what = "Host";
+                    temp.type = "Host";
                     IPGiver server = new IPGiver();
                     server.bind = temp;
                     server.execute();
                 }
                 else {
-                    item.setTitle("Guest");
-                    temp.what = "Guest";
+                    temp.type = "Guest";
                     IPRequester client = new IPRequester();
                     client.bind = temp;
                     client.execute(owner.toString());
                 }
                 connected = true;
-                MenuItem cancel = menu.findItem(R.id.cancel);
-                cancel.setVisible(true);
-                cancel.setEnabled(true);
             }
         }
     };
@@ -254,7 +245,21 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
             Toast.makeText(parent.getApplicationContext(), "Error: No connection established", Toast.LENGTH_SHORT).show();
         }
         else{
-            passInfo(this.what, this.phonesIps);
+            passInfo(this.type, this.phonesIps);
         }
+    }
+
+    public void addItemsToUI(){
+        menu.findItem(R.id.con_status).setTitle(type);
+        menu.findItem(R.id.con_status).setVisible(true);
+        menu.findItem(R.id.cancel).setVisible(true);
+        menu.findItem(R.id.cancel).setEnabled(true);
+    }
+
+    public void removeItemsFromUI(){
+        menu.findItem(R.id.con_status).setTitle("");
+        menu.findItem(R.id.con_status).setVisible(false);
+        menu.findItem(R.id.cancel).setVisible(false);
+        menu.findItem(R.id.cancel).setEnabled(false);
     }
 }
