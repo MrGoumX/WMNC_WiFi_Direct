@@ -12,14 +12,26 @@ import android.view.ViewGroup;
 
 public class InfoFrag extends Fragment {
 
+    private Menu menu;
+    private MenuInflater menuInflater;
+    private String type;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.info_frag, container, false);
+        View view = inflater.inflate(R.layout.info_frag, container, false);
+        setHasOptionsMenu(true);
+        //type = getArguments().getString("connected");
+        return view;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        /*if(!type.equals("")){
+            menu.findItem(R.id.con_status).setVisible(true);
+            menu.findItem(R.id.con_status).setTitle(type);
+        }*/
         super.onCreateOptionsMenu(menu, inflater);
     }
+
 }

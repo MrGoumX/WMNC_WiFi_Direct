@@ -16,9 +16,8 @@ import android.widget.Toast;
 public class DrawerMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, onConnectionInfo {
 
     private WifiManager wifiManager;
-    private String what;
+    private String what = "";
     private phonesIps phonesIps;
-    private InfoFrag infoFrag;
     private SettingsFrag settingsFrag;
     protected Menu menu;
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 0; // It is necessary for device scanning
@@ -45,7 +44,6 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
 
         wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
-        infoFrag = new InfoFrag();
         settingsFrag = new SettingsFrag();
     }
 
@@ -96,6 +94,8 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
+            //TODO THE FUCK IS GOING ON WITH THE BUNDLE
+            InfoFrag infoFrag = new InfoFrag();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, infoFrag).commit();
         } else if (id == R.id.nav_trans) {
 
@@ -141,5 +141,9 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
             menu.findItem(R.id.con_status).setVisible(true);
             menu.findItem(R.id.con_status).setTitle(this.what);
         }
+    }
+
+    public Menu getMenu(){
+        return menu;
     }
 }
