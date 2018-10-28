@@ -1,6 +1,7 @@
 package gr.aueb.wmnc.wifidirecttransfer;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,15 +12,17 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class Client extends AsyncTask<String, Void, String> {
+public class Client extends AsyncTask<String, Void, phonesIps> {
 
+    public postConnectionIps bind = null;
     private Socket socket;
-    private String ip, server;
+    private String ip, server, client;
     private ObjectOutputStream out;
     private ObjectInputStream in;
+    private phonesIps ips;
 
     @Override
-    protected String doInBackground(String... strings) {
+    protected phonesIps doInBackground(String... strings) {
         ip = strings[0].substring(1);
         try{
             System.out.println(ip);
@@ -29,17 +32,33 @@ public class Client extends AsyncTask<String, Void, String> {
             in = new ObjectInputStream(socket.getInputStream());
             out.writeObject(server);
             out.flush();
-            String ip2 = (String)in.readObject();
-            System.out.println(ip2);
+            client = (String)in.readObject();
+            client = client.substring(1);
         }
         catch (IOException|ClassNotFoundException e){
             e.printStackTrace();
         }
-        return null;
+        try{
+            if(out != null && in != null &&socket != null) {
+                out.close();
+                in.close();
+                socket.close();
+            }
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        ips = new phonesIps(server, client);
+        return ips;
     }
 
     @Override
-    public void onPostExecute(String ret){
-        ret = ip;
+    protected void onPostExecute(phonesIps phonesIps) {
+        if (bind == null){
+            Log.e("postConnectionIps", "No fragment bound to this task");
+        }
+        else{
+            bind.getIps(phonesIps);
+        }
     }
 }

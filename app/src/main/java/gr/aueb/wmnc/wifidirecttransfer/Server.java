@@ -1,6 +1,7 @@
 package gr.aueb.wmnc.wifidirecttransfer;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -9,35 +10,54 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server extends AsyncTask<Void, Void, String> {
+public class Server extends AsyncTask<Void, Void, phonesIps> {
 
+    public postConnectionIps bind = null;
     private ServerSocket serverSocket;
     private Socket socket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    private String ip;
+    private String serverIp, clientIp;
+    private phonesIps ips;
 
     @Override
-    protected String doInBackground(Void... voids) {
+    protected phonesIps doInBackground(Void... voids) {
         try{
             ServerSocket server = new ServerSocket(4200);
             Socket socket = server.accept();
-            ip = socket.getInetAddress().toString();
+            serverIp = socket.getInetAddress().toString();
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
-            String ip2 = (String)in.readObject();
-            out.writeObject(ip);
+            clientIp = (String)in.readObject();
+            clientIp = clientIp.substring(1);
+            out.writeObject(serverIp);
             out.flush();
-            System.out.println(ip2);
         }
         catch (IOException|ClassNotFoundException e){
             e.printStackTrace();
         }
-        return null;
+        try{
+            if(out != null && in != null && socket != null && serverSocket != null){
+                out.close();
+                in.close();
+                socket.close();
+                serverSocket.close();
+            }
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        ips = new phonesIps(serverIp, clientIp);
+        return ips;
     }
 
     @Override
-    public void onPostExecute(String ret){
-        ret = ip;
+    protected void onPostExecute(phonesIps phonesIps) {
+        if(bind == null){
+            Log.e("postConnectionIps", "No fragment bound to this task");
+        }
+        else{
+            bind.getIps(phonesIps);
+        }
     }
 }

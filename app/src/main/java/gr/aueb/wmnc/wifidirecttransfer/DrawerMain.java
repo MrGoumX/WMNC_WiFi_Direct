@@ -9,6 +9,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,10 +24,14 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-public class DrawerMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class DrawerMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, onConnectionInfo {
 
     private WifiManager wifiManager;
+    private String what;
+    private phonesIps phonesIps;
+    protected Menu menu;
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 0;
 
     @Override
@@ -64,6 +69,7 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.drawer_main, menu);
+        this.menu = menu;
         return true;
     }
 
@@ -92,17 +98,19 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        InfoFrag infoFrag = new InfoFrag();
+        SettingsFrag settingsFrag = new SettingsFrag();
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment, new InfoFrag()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment, infoFrag).commit();
         } else if (id == R.id.nav_trans) {
 
         } else if (id == R.id.nav_chat) {
 
         } else if (id == R.id.nav_settings) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment, new SettingsFrag()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment, settingsFrag).commit();
         } else if (id == R.id.nav_person1) {
             PersonFrag personFrag = new PersonFrag();
             Bundle person = new Bundle();
@@ -126,5 +134,19 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onConnectionInfo(String what, phonesIps phonesIps) {
+        System.out.println(menu.getItem(R.id.con_status));
+        this.what = what;
+        this.phonesIps = phonesIps;
+        if(this.what == null && this.phonesIps == null){
+            Toast.makeText(getApplicationContext(), "Error: No connection established", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            menu.findItem(R.id.con_status).setVisible(true);
+            menu.findItem(R.id.con_status).setTitle(this.what);
+        }
     }
 }

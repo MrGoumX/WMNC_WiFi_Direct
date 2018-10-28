@@ -4,8 +4,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/cancel"
+        android:enabled="false"
+        android:icon="@drawable/ic_cancel_black_24dp"
+        android:title="Cancel Connection"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/con_status"
         android:enabled="false"
+        android:visible="false"
         app:showAsAction="always" />
 
     <item
@@ -13,6 +21,7 @@
         android:title="Enable/Disable WiFi"
         app:showAsAction="always"
         android:icon="@drawable/wifi"/>
+
     <item
         android:id="@+id/refresh"
         android:visible="false"
@@ -20,4 +29,5 @@
         android:title="Refresh Peers"
         app:showAsAction="always"
         android:icon="@drawable/refresh"/>
+
 </menu>

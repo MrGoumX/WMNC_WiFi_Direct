@@ -44,9 +44,7 @@ public class WiFiDirectBR extends BroadcastReceiver {
             }
         }
         else if(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)){
-            System.out.println("here2");
             if(mManager != null){
-                System.out.println("here");
                 mManager.requestPeers(mChannel, fragment.peerList);
             }
 

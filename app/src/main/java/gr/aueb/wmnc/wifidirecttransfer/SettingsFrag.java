@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -25,7 +26,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.net.InetAddress;
 import java.sql.SQLOutput;
@@ -34,8 +38,9 @@ import java.util.List;
 
 import static android.os.Looper.getMainLooper;
 
-public class SettingsFrag extends Fragment {
+public class SettingsFrag extends Fragment implements postConnectionIps{
 
+    public onConnectionInfo info;
     private IntentFilter intentFilter;
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
@@ -48,6 +53,10 @@ public class SettingsFrag extends Fragment {
     private View view;
     private Menu menu;
     private Activity parent;
+    private phonesIps phonesIps;
+    private SettingsFrag temp;
+    private String what;
+    private boolean connected = false;
 
     @Nullable
     @Override
@@ -61,6 +70,12 @@ public class SettingsFrag extends Fragment {
         restOfAction();
 
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        info = (onConnectionInfo) context;
     }
 
     @Override
@@ -79,10 +94,27 @@ public class SettingsFrag extends Fragment {
         if(id == R.id.refresh){
             discover();
         }
+        else if(id == R.id.cancel){
+            if(connected){
+                mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(parent.getApplicationContext(), "Disconnect Successful", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(int i) {
+                        Toast.makeText(parent.getApplicationContext(), "Disconnect Failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
         return super.onOptionsItemSelected(item);
     }
 
     private void restOfAction() {
+        temp = this;
+
         intentFilter = new IntentFilter();
 
         parent = this.getActivity();
@@ -98,7 +130,6 @@ public class SettingsFrag extends Fragment {
         mReceiver = new WiFiDirectBR(mManager, mChannel, parent, this);
 
         peers = new ArrayList<>();
-        //discover();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
@@ -119,6 +150,8 @@ public class SettingsFrag extends Fragment {
                 });
             }
         });
+
+        discover();
     }
 
     @Override
@@ -156,15 +189,25 @@ public class SettingsFrag extends Fragment {
         public void onConnectionInfoAvailable(WifiP2pInfo info) {
             final InetAddress owner = info.groupOwnerAddress;
             MenuItem item = menu.findItem(R.id.con_status);
-            if(info.groupFormed && info.isGroupOwner) {
-                item.setTitle("Host");
-                Server server = new Server();
-                server.execute();
-            }
-            else {
-                item.setTitle("Client");
-                Client client = new Client();
-                client.execute(owner.toString());
+            if(!connected){
+                if(info.groupFormed && info.isGroupOwner) {
+                    item.setTitle("Host");
+                    temp.what = "Host";
+                    Server server = new Server();
+                    server.bind = temp;
+                    server.execute();
+                }
+                else {
+                    item.setTitle("Client");
+                    temp.what = "Client";
+                    Client client = new Client();
+                    client.bind = temp;
+                    client.execute(owner.toString());
+                }
+                connected = true;
+                MenuItem cancel = menu.findItem(R.id.cancel);
+                cancel.setVisible(true);
+                cancel.setEnabled(true);
             }
         }
     };
@@ -179,12 +222,11 @@ public class SettingsFrag extends Fragment {
                 devices = new WifiP2pDevice[peersL.getDeviceList().size()];
                 int k = 0;
                 for(WifiP2pDevice i : peersL.getDeviceList()){
-                    System.out.println(i.deviceName);
                     deviceNames[k] = i.deviceName;
                     devices[k] = i;
                     k++;
                 }
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(parent.getApplicationContext(), android.R.layout.simple_list_item_1, deviceNames);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(parent.getApplicationContext(), R.layout.simple_list_item_1, deviceNames);
                 listView.setAdapter(adapter);
             }
             if(peers.size() == 0){
@@ -193,4 +235,19 @@ public class SettingsFrag extends Fragment {
             }
         }
     };
+
+    public void passInfo(String what, phonesIps phonesIps){
+        info.onConnectionInfo(what, phonesIps);
+    }
+
+    @Override
+    public void getIps(phonesIps phonesIps) {
+        this.phonesIps = phonesIps;
+        if(this.phonesIps == null){
+            Toast.makeText(parent.getApplicationContext(), "Error: No connection established", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            passInfo(this.what, this.phonesIps);
+        }
+    }
 }
