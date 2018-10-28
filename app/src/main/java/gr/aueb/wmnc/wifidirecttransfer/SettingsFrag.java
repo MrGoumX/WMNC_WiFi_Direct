@@ -32,6 +32,7 @@ import java.util.List;
 
 import gr.aueb.wmnc.wifidirecttransfer.logic.IPGiver;
 import gr.aueb.wmnc.wifidirecttransfer.logic.IPRequester;
+import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
 
 import static android.os.Looper.getMainLooper;
 
@@ -124,7 +125,7 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
         mChannel = mManager.initialize(parent, getMainLooper(), null);
         //mChannel = mManager.initialize(parent.getApplicationContext(), getMainLooper(), null);
         wifiManager = (WifiManager) parent.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        mReceiver = new WiFiDirectBR(mManager, mChannel, parent, this);
+        mReceiver = new WiFiDirectReceiver(mManager, mChannel, parent, this);
 
         peers = new ArrayList<>();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -154,7 +155,7 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
     @Override
     public void onResume() {
         super.onResume();
-        mReceiver = new WiFiDirectBR(mManager, mChannel, parent, this);
+        mReceiver = new WiFiDirectReceiver(mManager, mChannel, parent, this);
         parent.registerReceiver(mReceiver, intentFilter);
     }
 
@@ -180,7 +181,7 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
         });
     }
 
-    WifiP2pManager.ConnectionInfoListener connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
+    private WifiP2pManager.ConnectionInfoListener connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
         @SuppressLint("RestrictedApi")
         @Override
         public void onConnectionInfoAvailable(WifiP2pInfo info) {
@@ -209,7 +210,7 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
         }
     };
 
-    WifiP2pManager.PeerListListener peerList = new WifiP2pManager.PeerListListener(){
+    private WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener(){
         @Override
         public void onPeersAvailable(WifiP2pDeviceList peersL) {
             if(!peersL.getDeviceList().equals(peers)){
@@ -232,6 +233,11 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
             }
         }
     };
+
+    // temporal solution, a better way is to transfer the listener to the WifiDirectReceiver class
+    public WifiP2pManager.PeerListListener getPeerListListener() { return peerListListener; }
+    public WifiP2pManager.ConnectionInfoListener getConnectionInfoListener() { return  connectionInfoListener; }
+
 
     public void passInfo(String what, phonesIps phonesIps){
         info.onConnectionInfo(what, phonesIps);

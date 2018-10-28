@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
 /*@Override
     protected void onResume(){
         super.onResume();
-        mReceiver = new WiFiDirectBR(mManager, mChannel, this, null);
+        mReceiver = new WiFiDirectReceiver(mManager, mChannel, this, null);
         registerReceiver(mReceiver, intentFilter);
     }
 
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    WifiP2pManager.PeerListListener peerList = new WifiP2pManager.PeerListListener(){
+    WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener(){
         @Override
         public void onPeersAvailable(WifiP2pDeviceList peersL) {
             if(!peersL.getDeviceList().equals(peers)){
