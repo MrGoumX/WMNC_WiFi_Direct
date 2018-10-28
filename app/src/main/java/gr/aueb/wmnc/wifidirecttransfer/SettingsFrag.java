@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
-import android.graphics.Color;
-import android.hardware.SensorManager;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -26,15 +24,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.net.InetAddress;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
+
+import gr.aueb.wmnc.wifidirecttransfer.logic.IPGiver;
+import gr.aueb.wmnc.wifidirecttransfer.logic.IPRequester;
 
 import static android.os.Looper.getMainLooper;
 
@@ -193,14 +190,14 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
                 if(info.groupFormed && info.isGroupOwner) {
                     item.setTitle("Host");
                     temp.what = "Host";
-                    Server server = new Server();
+                    IPGiver server = new IPGiver();
                     server.bind = temp;
                     server.execute();
                 }
                 else {
-                    item.setTitle("Client");
-                    temp.what = "Client";
-                    Client client = new Client();
+                    item.setTitle("IPRequester");
+                    temp.what = "IPRequester";
+                    IPRequester client = new IPRequester();
                     client.bind = temp;
                     client.execute(owner.toString());
                 }

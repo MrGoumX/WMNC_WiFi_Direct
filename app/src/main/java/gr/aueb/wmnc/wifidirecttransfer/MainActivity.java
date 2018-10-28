@@ -176,12 +176,12 @@ public class MainActivity extends AppCompatActivity {
             MenuItem item = menu.findItem(R.id.con_status);
             if(info.groupFormed && info.isGroupOwner) {
                 item.setTitle("Host");
-                Server server = new Server();
+                IPGiver server = new IPGiver();
                 server.execute();
             }
             else {
-                item.setTitle("Client");
-                Client client = new Client();
+                item.setTitle("IPRequester");
+                IPRequester client = new IPRequester();
                 client.execute(owner.toString());
             }
         }

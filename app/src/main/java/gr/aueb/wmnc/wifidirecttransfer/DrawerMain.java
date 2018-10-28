@@ -1,16 +1,8 @@
 package gr.aueb.wmnc.wifidirecttransfer;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
-import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.MenuInflater;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,12 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class DrawerMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, onConnectionInfo {
 
@@ -32,12 +19,14 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
     private String what;
     private phonesIps phonesIps;
     protected Menu menu;
-    private static final int PERMISSION_ACCESS_COARSE_LOCATION = 0;
+    private static final int PERMISSION_ACCESS_COARSE_LOCATION = 0; // It is necessary for device scanning
+                                                                    // after Android version 7 and on
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
