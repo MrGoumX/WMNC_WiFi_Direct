@@ -36,24 +36,14 @@ import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
 
 import static android.os.Looper.getMainLooper;
 
-public class SettingsFrag extends Fragment implements postConnectionIps{
+public class SettingsFrag extends Fragment{
 
-    public onConnectionInfo info;
-    private IntentFilter intentFilter;
-    private WifiP2pManager.Channel mChannel;
-    private WifiP2pManager mManager;
-    private WifiManager wifiManager;
-    private BroadcastReceiver mReceiver;
-    private List<WifiP2pDevice> peers;
-    private String[] deviceNames;
-    private WifiP2pDevice[] devices;
+    //public onConnectionInfo info;
+    private WiFiDirectReceiver wiFiDirectReceiver;
     private ListView listView;
     private View view;
     private Menu menu;
-    private Activity parent;
     private phonesIps phonesIps;
-    private SettingsFrag temp;
-    private String type;
     private boolean connected = false;
 
     @Nullable
@@ -62,6 +52,9 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
         view = inflater.inflate(R.layout.settings_frag, container, false);
 
         listView = (ListView)view.findViewById(R.id.device_list);
+
+        wiFiDirectReceiver = WiFiDirectReceiver.getInstance();
+        wiFiDirectReceiver.initialize(this.getActivity());
 
         setHasOptionsMenu(true);
 
@@ -73,7 +66,7 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        info = (onConnectionInfo) context;
+        //info = (onConnectionInfo) context;
     }
 
     @Override
@@ -99,41 +92,13 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
     }
 
     private void restOfAction() {
-        temp = this;
-
-        intentFilter = new IntentFilter();
-
-        parent = this.getActivity();
-
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-        mManager = (WifiP2pManager) parent.getSystemService(Context.WIFI_P2P_SERVICE);
-        mChannel = mManager.initialize(parent, getMainLooper(), null);
-        //mChannel = mManager.initialize(parent.getApplicationContext(), getMainLooper(), null);
-        wifiManager = (WifiManager) parent.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        mReceiver = new WiFiDirectReceiver(mManager, mChannel, parent, this);
-
-        peers = new ArrayList<>();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
-                final WifiP2pDevice device = devices[position];
-                WifiP2pConfig config = new WifiP2pConfig();
-                config.deviceAddress = device.deviceAddress;
-
-                mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
-                    @Override
-                    public void onSuccess() {
-                        Toast.makeText(parent.getContext(), "Connected to " + device.deviceName, Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onFailure(int reason) {
-                        Toast.makeText(parent.getContext(), "Connection falied", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                wiFiDirectReceiver.select(position);
+                if(WiFiDirectReceiver.connected){
+                    addItemsToUI();
+                }
             }
         });
 
@@ -143,101 +108,27 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
     @Override
     public void onResume() {
         super.onResume();
-        mReceiver = new WiFiDirectReceiver(mManager, mChannel, parent, this);
-        parent.registerReceiver(mReceiver, intentFilter);
+        wiFiDirectReceiver.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        parent.unregisterReceiver(mReceiver);
+        wiFiDirectReceiver.onPause();
     }
 
     private void discover(){
-        mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-
-                Toast.makeText(parent.getApplicationContext(), "Discovery Started", Toast.LENGTH_SHORT).show();
-
-            }
-
-            @Override
-            public void onFailure(int reason) {
-                Toast.makeText(parent.getApplicationContext(), "Discovery Failed", Toast.LENGTH_SHORT).show();
-            }
-        });
+        wiFiDirectReceiver.discover(listView);
+        /*ArrayAdapter<String> adapter = wiFiDirectReceiver.getAdapter();
+        listView.setAdapter(adapter);*/
     }
 
-    private WifiP2pManager.ConnectionInfoListener connectionInfoListener = new WifiP2pManager.ConnectionInfoListener() {
-        @SuppressLint("RestrictedApi")
-        @Override
-        public void onConnectionInfoAvailable(WifiP2pInfo info) {
-            final InetAddress owner = info.groupOwnerAddress;
-            if(!connected){
-                if(info.groupFormed && info.isGroupOwner) {
-                    temp.type = "Host";
-                    IPGiver server = new IPGiver();
-                    server.bind = temp;
-                    server.execute();
-                }
-                else {
-                    temp.type = "Guest";
-                    IPRequester client = new IPRequester();
-                    client.bind = temp;
-                    client.execute(owner.toString());
-                }
-                connected = true;
-            }
-        }
-    };
-
-    private WifiP2pManager.PeerListListener peerListListener = new WifiP2pManager.PeerListListener(){
-        @Override
-        public void onPeersAvailable(WifiP2pDeviceList peersL) {
-            if(!peersL.getDeviceList().equals(peers)){
-                peers.clear();
-                peers.addAll(peersL.getDeviceList());
-                deviceNames = new String[peersL.getDeviceList().size()];
-                devices = new WifiP2pDevice[peersL.getDeviceList().size()];
-                int k = 0;
-                for(WifiP2pDevice i : peersL.getDeviceList()){
-                    deviceNames[k] = i.deviceName;
-                    devices[k] = i;
-                    k++;
-                }
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(parent.getApplicationContext(), R.layout.simple_list_item_1, deviceNames);
-                listView.setAdapter(adapter);
-            }
-            if(peers.size() == 0){
-                Toast.makeText(parent.getApplicationContext(), "No devices found", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-    };
-
-    // temporal solution, a better way is to transfer the listener to the WifiDirectReceiver class
-    public WifiP2pManager.PeerListListener getPeerListListener() { return peerListListener; }
-    public WifiP2pManager.ConnectionInfoListener getConnectionInfoListener() { return  connectionInfoListener; }
-
-
-    public void passInfo(String what, phonesIps phonesIps){
+    /*public void passInfo(String what, phonesIps phonesIps){
         info.onConnectionInfo(what, phonesIps);
-    }
-
-    @Override
-    public void getIps(phonesIps phonesIps) {
-        this.phonesIps = phonesIps;
-        if(this.phonesIps == null){
-            Toast.makeText(parent.getApplicationContext(), "Error: No connection established", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            passInfo(this.type, this.phonesIps);
-        }
-    }
+    }*/
 
     public void addItemsToUI(){
-        menu.findItem(R.id.con_status).setTitle(type);
+        menu.findItem(R.id.con_status).setTitle(wiFiDirectReceiver.getType());
         menu.findItem(R.id.con_status).setVisible(true);
         menu.findItem(R.id.cancel).setVisible(true);
         menu.findItem(R.id.cancel).setEnabled(true);
@@ -251,19 +142,7 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
     }
 
     public void cancelConnection(){
-        if(connected){
-            mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
-                @Override
-                public void onSuccess() {
-                    Toast.makeText(parent.getApplicationContext(), "Disconnect Successful", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onFailure(int i) {
-                    Toast.makeText(parent.getApplicationContext(), "Disconnect Failed", Toast.LENGTH_SHORT).show();
-                }
-            });
-            connected = false;
-        }
+        wiFiDirectReceiver.disconnect();
+        if(!WiFiDirectReceiver.connected) removeItemsFromUI();
     }
 }

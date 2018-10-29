@@ -1,10 +1,14 @@
 package gr.aueb.wmnc.wifidirecttransfer;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.icu.text.IDNA;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,6 +25,7 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
     private phonesIps phonesIps;
     private InfoFrag infoFrag;
     private SettingsFrag settingsFrag;
+    private ServiceFrag serviceFrag;
     protected Menu menu;
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 0; // It is necessary for device scanning
                                                                     // after Android version 7 and on
@@ -29,6 +34,13 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer_main);
+
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        PERMISSION_ACCESS_COARSE_LOCATION);
+            }
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -51,6 +63,7 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         settingsFrag = new SettingsFrag();
+        serviceFrag = new ServiceFrag();
     }
 
     @Override
@@ -110,6 +123,8 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
 
         } else if (id == R.id.nav_settings) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, settingsFrag).commit();
+        } else if(id == R.id.nav_services){
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment, serviceFrag).commit();
         } else if (id == R.id.nav_person1) {
             PersonFrag personFrag = new PersonFrag();
             Bundle person = new Bundle();
