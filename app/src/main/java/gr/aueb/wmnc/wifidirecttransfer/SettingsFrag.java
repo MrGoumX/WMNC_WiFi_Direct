@@ -93,20 +93,7 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
             discover();
         }
         else if(id == R.id.cancel){
-            if(connected){
-                mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
-                    @Override
-                    public void onSuccess() {
-                        Toast.makeText(parent.getApplicationContext(), "Disconnect Successful", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onFailure(int i) {
-                        Toast.makeText(parent.getApplicationContext(), "Disconnect Failed", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                connected = false;
-            }
+            cancelConnection();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -261,5 +248,22 @@ public class SettingsFrag extends Fragment implements postConnectionIps{
         menu.findItem(R.id.con_status).setVisible(false);
         menu.findItem(R.id.cancel).setVisible(false);
         menu.findItem(R.id.cancel).setEnabled(false);
+    }
+
+    public void cancelConnection(){
+        if(connected){
+            mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(parent.getApplicationContext(), "Disconnect Successful", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(int i) {
+                    Toast.makeText(parent.getApplicationContext(), "Disconnect Failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+            connected = false;
+        }
     }
 }

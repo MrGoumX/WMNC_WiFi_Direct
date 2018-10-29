@@ -1,6 +1,7 @@
 package gr.aueb.wmnc.wifidirecttransfer;
 
 import android.content.Context;
+import android.icu.text.IDNA;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -16,8 +17,9 @@ import android.widget.Toast;
 public class DrawerMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, onConnectionInfo {
 
     private WifiManager wifiManager;
-    private String what = "";
+    private String what;
     private phonesIps phonesIps;
+    private InfoFrag infoFrag;
     private SettingsFrag settingsFrag;
     protected Menu menu;
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 0; // It is necessary for device scanning
@@ -40,7 +42,11 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment, new InfoFrag()).commit();
+        infoFrag = new InfoFrag();
+        Bundle info = new Bundle();
+        info.putString("connected", what);
+        infoFrag.setArguments(info);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment, infoFrag).commit();
 
         wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
@@ -94,8 +100,9 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            //TODO THE FUCK IS GOING ON WITH THE BUNDLE
-            InfoFrag infoFrag = new InfoFrag();
+            Bundle info = new Bundle();
+            info.putString("connected", what);
+            infoFrag.setArguments(info);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, infoFrag).commit();
         } else if (id == R.id.nav_trans) {
 
@@ -145,5 +152,9 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
 
     public Menu getMenu(){
         return menu;
+    }
+
+    public SettingsFrag getSettingsFrag() {
+        return settingsFrag;
     }
 }
