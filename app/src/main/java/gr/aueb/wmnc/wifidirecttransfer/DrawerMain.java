@@ -57,9 +57,6 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         navigationView.setNavigationItemSelectedListener(this);
 
         infoFrag = new InfoFrag();
-        Bundle info = new Bundle();
-        info.putString("connected", type);
-        infoFrag.setArguments(info);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment, infoFrag).commit();
 
         wifiManager = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -98,10 +95,16 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
             if(wifiManager.isWifiEnabled()){
                 wifiManager.setWifiEnabled(false);
                 Toast.makeText(getApplicationContext(), "WiFi: Disabled", Toast.LENGTH_SHORT).show();
+                UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
             }
             else{
                 wifiManager.setWifiEnabled(true);
                 Toast.makeText(getApplicationContext(), "WiFi: Enabled", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else if(id == R.id.cancel){
+            if(WiFiDirectReceiver.connected){
+                settingsFrag.cancelConnection();
             }
         }
 
@@ -113,16 +116,7 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        if(WiFiDirectReceiver.connected){
-            this.type = settingsFrag.getType();
-        }
-        else{
-            this.type = null;
-        }
         if (id == R.id.nav_home) {
-            Bundle info = new Bundle();
-            info.putString("connected", type);
-            infoFrag.setArguments(info);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, infoFrag).commit();
         } else if (id == R.id.nav_trans) {
 
@@ -151,17 +145,13 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
             personFrag.setArguments(person);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, personFrag).commit();
         }
-
+        UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    public Menu getMenu(){
-        return menu;
-    }
-
-    public SettingsFrag getSettingsFrag() {
-        return settingsFrag;
+    public void setPhonesIps(phonesIps phonesIps){
+        this.phonesIps = phonesIps;
     }
 }

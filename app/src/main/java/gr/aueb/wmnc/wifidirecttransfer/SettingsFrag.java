@@ -56,7 +56,7 @@ public class SettingsFrag extends Fragment{
         listView = (ListView)view.findViewById(R.id.device_list);
 
         wiFiDirectReceiver = WiFiDirectReceiver.getInstance();
-        wiFiDirectReceiver.initialize(this.getActivity(), this);
+        wiFiDirectReceiver.initialize(this.getActivity());
 
         this.activity = getActivity();
 
@@ -68,18 +68,12 @@ public class SettingsFrag extends Fragment{
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.findItem(R.id.refresh).setVisible(true);
         menu.findItem(R.id.refresh).setEnabled(true);
-        if(WiFiDirectReceiver.connected){
-            addItemsToUI();
-        }
         this.menu = menu;
+        wiFiDirectReceiver.setMenu(menu);
+        UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -90,9 +84,6 @@ public class SettingsFrag extends Fragment{
         //noinspection SimplifiableIfStatement
         if(id == R.id.refresh){
             discover();
-        }
-        else if(id == R.id.cancel){
-            cancelConnection();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -132,20 +123,6 @@ public class SettingsFrag extends Fragment{
     /*public void passInfo(String what, phonesIps phonesIps){
         info.onConnectionInfo(what, phonesIps);
     }*/
-
-    public void addItemsToUI(){
-        menu.findItem(R.id.con_status).setTitle(wiFiDirectReceiver.getType());
-        menu.findItem(R.id.con_status).setVisible(true);
-        menu.findItem(R.id.cancel).setVisible(true);
-        menu.findItem(R.id.cancel).setEnabled(true);
-    }
-
-    public void removeItemsFromUI(){
-        menu.findItem(R.id.con_status).setTitle("");
-        menu.findItem(R.id.con_status).setVisible(false);
-        menu.findItem(R.id.cancel).setVisible(false);
-        menu.findItem(R.id.cancel).setEnabled(false);
-    }
 
     public void cancelConnection(){
         wiFiDirectReceiver.disconnect();

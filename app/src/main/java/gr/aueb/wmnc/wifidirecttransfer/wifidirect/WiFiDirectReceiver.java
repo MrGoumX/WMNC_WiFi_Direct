@@ -13,17 +13,21 @@ import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.view.Menu;
 import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import gr.aueb.wmnc.wifidirecttransfer.DrawerMain;
 import gr.aueb.wmnc.wifidirecttransfer.R;
 import gr.aueb.wmnc.wifidirecttransfer.SettingsFrag;
+import gr.aueb.wmnc.wifidirecttransfer.UIUpdater;
 import gr.aueb.wmnc.wifidirecttransfer.logic.IPGiver;
 import gr.aueb.wmnc.wifidirecttransfer.logic.IPRequester;
 import gr.aueb.wmnc.wifidirecttransfer.onConnectionInfo;
@@ -40,12 +44,11 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
     private WifiP2pManager mManager;
     private WifiManager wifiManager;
     private Activity mActivity;
-    private SettingsFrag settingsFrag;
+    private Menu menu;
     private int state;
     private List<WifiP2pDevice> peers;
     private String[] deviceNames;
     private WifiP2pDevice[] devices;
-    private String type;
     private phonesIps phoneIps;
     private ArrayAdapter<String> adapter;
     private WiFiDirectReceiver thisClass = this;
@@ -54,6 +57,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
 
     private static WiFiDirectReceiver instance = null;
     public static boolean connected = false;
+    public static String type = "";
 
     public static WiFiDirectReceiver getInstance()
     {
@@ -67,11 +71,10 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
 
     }
 
-    public void initialize(Activity activity, SettingsFrag settingsFrag)
+    public void initialize(Activity activity)
     {
         if(!isInitialized){
             this.mActivity = activity;
-            this.settingsFrag = settingsFrag;
             intentFilter = new IntentFilter();
             intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
             intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -110,10 +113,12 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
             NetworkInfo info = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
             if(info.isConnected()){
                 mManager.requestConnectionInfo(mChannel, connectionInfoListener);
-                settingsFrag.addItemsToUI();
             }
             else{
-                settingsFrag.removeItemsFromUI();
+                System.out.println("pass");
+                connected = false;
+                type = "";
+                UIUpdater.updateUI(menu, type);
             }
         }
         else if(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)){
@@ -139,8 +144,8 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 client.bind = thisClass;
                 client.execute(owner.toString());
             }
-            settingsFrag.addItemsToUI();
             connected = true;
+            UIUpdater.updateUI(menu, type);
         }
         }
     };
@@ -206,6 +211,10 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 @Override
                 public void onSuccess() {
                     Toast.makeText(mActivity.getApplicationContext(), "Disconnect Successful", Toast.LENGTH_SHORT).show();
+                    connected = false;
+                    type = "";
+                    UIUpdater.updateUI(menu, type);
+                    ((DrawerMain)mActivity).setPhonesIps(null);
                 }
 
                 @Override
@@ -213,7 +222,6 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                     Toast.makeText(mActivity.getApplicationContext(), "Disconnect Failed", Toast.LENGTH_SHORT).show();
                 }
             });
-            connected = false;
         }
     }
 
@@ -252,5 +260,12 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         if(this.phoneIps == null){
             Toast.makeText(mActivity.getApplicationContext(), "Error: ", Toast.LENGTH_SHORT).show();
         }
+        else{
+            ((DrawerMain)mActivity).setPhonesIps(phonesIps);
+        }
+    }
+
+    public void setMenu(Menu menu){
+        this.menu = menu;
     }
 }
