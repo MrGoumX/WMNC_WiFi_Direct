@@ -1,16 +1,6 @@
 package gr.aueb.wmnc.wifidirecttransfer;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.IntentFilter;
-import android.net.wifi.WifiManager;
-import android.net.wifi.p2p.WifiP2pConfig;
-import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pDeviceList;
-import android.net.wifi.p2p.WifiP2pInfo;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,17 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import gr.aueb.wmnc.wifidirecttransfer.logic.IPGiver;
-import gr.aueb.wmnc.wifidirecttransfer.logic.IPRequester;
 import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
 
 import static android.os.Looper.getMainLooper;
@@ -40,7 +21,7 @@ import static android.os.Looper.getMainLooper;
 public class SettingsFrag extends Fragment{
 
     private WiFiDirectReceiver wiFiDirectReceiver;
-    private ListView listView;
+    private ListView listView, listView2;
     private View view;
     private Menu menu;
     private phonesIps phonesIps;
@@ -54,6 +35,7 @@ public class SettingsFrag extends Fragment{
         view = inflater.inflate(R.layout.settings_frag, container, false);
 
         listView = (ListView)view.findViewById(R.id.device_list);
+        listView2 = (ListView)view.findViewById(R.id.service_list);
 
         wiFiDirectReceiver = WiFiDirectReceiver.getInstance();
         wiFiDirectReceiver.initialize(this.getActivity());
@@ -92,10 +74,10 @@ public class SettingsFrag extends Fragment{
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
-                wiFiDirectReceiver.select(position);
-                if(WiFiDirectReceiver.connected){
-                    phonesIps = wiFiDirectReceiver.getPhoneIps();
-                }
+            wiFiDirectReceiver.select(position);
+            if(WiFiDirectReceiver.connected){
+                phonesIps = wiFiDirectReceiver.getPhoneIps();
+            }
             }
         });
 
@@ -115,14 +97,8 @@ public class SettingsFrag extends Fragment{
     }
 
     private void discover(){
-        wiFiDirectReceiver.discover(listView);
-        /*ArrayAdapter<String> adapter = wiFiDirectReceiver.getAdapter();
-        listView.setAdapter(adapter);*/
+        wiFiDirectReceiver.discover(listView, listView2);
     }
-
-    /*public void passInfo(String what, phonesIps phonesIps){
-        info.onConnectionInfo(what, phonesIps);
-    }*/
 
     public void cancelConnection(){
         wiFiDirectReceiver.disconnect();

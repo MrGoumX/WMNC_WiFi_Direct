@@ -18,6 +18,9 @@ import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
 public class ServiceFrag extends Fragment {
 
     private Activity activity;
+    private Menu menu;
+    private WiFiDirectReceiver wiFiDirectReceiver;
+    private Button serviceButton;
 
     @Nullable
     @Override
@@ -26,26 +29,36 @@ public class ServiceFrag extends Fragment {
 
         setHasOptionsMenu(true);
 
-        //Button button = (Button)view.findViewById(R.id.create_service);
+        wiFiDirectReceiver = WiFiDirectReceiver.getInstance();
+        wiFiDirectReceiver.initialize(this.getActivity());
 
-        //button.setOnClickListener(new View.OnClickListener() {
-        /*    @Override
+        serviceButton = (Button) view.findViewById(R.id.create_service);
+
+        serviceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View view) {
                 startService();
             }
-        });*/
-
+        });
         return view;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+        this.menu = menu;
         UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
     }
 
     private void startService()
     {
-
+        if(!WiFiDirectReceiver.hasService){
+            wiFiDirectReceiver.startService();
+            serviceButton.setText("Disable Service");
+        }
+        else{
+            wiFiDirectReceiver.destroyService();
+            serviceButton.setText("Enable Service");
+        }
     }
 }
