@@ -35,12 +35,12 @@ import static android.os.Looper.getMainLooper;
 
 public class WiFiDirectReceiver extends BroadcastReceiver implements postConnectionIps{
 
-    public onConnectionInfo info;
     private IntentFilter intentFilter;
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
     private WifiManager wifiManager;
     private Activity mActivity;
+    private SettingsFrag settingsFrag;
     private int state;
     private List<WifiP2pDevice> peers;
     private String[] deviceNames;
@@ -67,10 +67,11 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
 
     }
 
-    public void initialize(Activity activity)
+    public void initialize(Activity activity, SettingsFrag settingsFrag)
     {
         if(!isInitialized){
             this.mActivity = activity;
+            this.settingsFrag = settingsFrag;
             intentFilter = new IntentFilter();
             intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
             intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -80,7 +81,6 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
             mChannel = mManager.initialize(mActivity, getMainLooper(), null);
             wifiManager = (WifiManager) mActivity.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             peers = new ArrayList<>();
-            info = (onConnectionInfo) this;
             isInitialized = true;
         }
     }
@@ -110,10 +110,10 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
             NetworkInfo info = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
             if(info.isConnected()){
                 mManager.requestConnectionInfo(mChannel, connectionInfoListener);
-                //fragment.addItemsToUI();
+                settingsFrag.addItemsToUI();
             }
             else{
-                //fragment.removeItemsFromUI();
+                settingsFrag.removeItemsFromUI();
             }
         }
         else if(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)){
@@ -139,6 +139,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 client.bind = thisClass;
                 client.execute(owner.toString());
             }
+            settingsFrag.addItemsToUI();
             connected = true;
         }
         }
@@ -168,16 +169,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         }
     };
 
-    @Override
-    public void getIps(phonesIps phonesIps) {
-        this.phoneIps = phonesIps;
-        if(this.phoneIps == null){
-            Toast.makeText(mActivity.getApplicationContext(), "Error: ", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            info.onConnectionInfo(type, phonesIps);
-        }
-    }
+
 
     public void onResume(){
         mActivity.registerReceiver(this, intentFilter);
@@ -248,5 +240,17 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
 
     public String getType(){
         return type;
+    }
+
+    public phonesIps getPhoneIps(){
+        return phoneIps;
+    }
+
+    @Override
+    public void getIps(phonesIps phonesIps) {
+        this.phoneIps = phonesIps;
+        if(this.phoneIps == null){
+            Toast.makeText(mActivity.getApplicationContext(), "Error: ", Toast.LENGTH_SHORT).show();
+        }
     }
 }

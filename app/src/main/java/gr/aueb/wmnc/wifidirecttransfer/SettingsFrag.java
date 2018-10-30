@@ -29,6 +29,7 @@ import android.widget.Toast;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import gr.aueb.wmnc.wifidirecttransfer.logic.IPGiver;
 import gr.aueb.wmnc.wifidirecttransfer.logic.IPRequester;
@@ -38,12 +39,13 @@ import static android.os.Looper.getMainLooper;
 
 public class SettingsFrag extends Fragment{
 
-    //public onConnectionInfo info;
     private WiFiDirectReceiver wiFiDirectReceiver;
     private ListView listView;
     private View view;
     private Menu menu;
     private phonesIps phonesIps;
+    private String type;
+    private Activity activity;
     private boolean connected = false;
 
     @Nullable
@@ -54,7 +56,9 @@ public class SettingsFrag extends Fragment{
         listView = (ListView)view.findViewById(R.id.device_list);
 
         wiFiDirectReceiver = WiFiDirectReceiver.getInstance();
-        wiFiDirectReceiver.initialize(this.getActivity());
+        wiFiDirectReceiver.initialize(this.getActivity(), this);
+
+        this.activity = getActivity();
 
         setHasOptionsMenu(true);
 
@@ -66,13 +70,15 @@ public class SettingsFrag extends Fragment{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        //info = (onConnectionInfo) context;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.findItem(R.id.refresh).setVisible(true);
         menu.findItem(R.id.refresh).setEnabled(true);
+        if(WiFiDirectReceiver.connected){
+            addItemsToUI();
+        }
         this.menu = menu;
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -97,7 +103,7 @@ public class SettingsFrag extends Fragment{
             public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
                 wiFiDirectReceiver.select(position);
                 if(WiFiDirectReceiver.connected){
-                    addItemsToUI();
+                    phonesIps = wiFiDirectReceiver.getPhoneIps();
                 }
             }
         });
@@ -143,6 +149,13 @@ public class SettingsFrag extends Fragment{
 
     public void cancelConnection(){
         wiFiDirectReceiver.disconnect();
-        if(!WiFiDirectReceiver.connected) removeItemsFromUI();
+    }
+
+    public phonesIps getPhonesIps(){
+        return wiFiDirectReceiver.getPhoneIps();
+    }
+
+    public String getType(){
+        return wiFiDirectReceiver.getType();
     }
 }

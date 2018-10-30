@@ -18,10 +18,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class DrawerMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, onConnectionInfo {
+import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
+
+public class DrawerMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private WifiManager wifiManager;
-    private String what;
+    private String type;
     private phonesIps phonesIps;
     private InfoFrag infoFrag;
     private SettingsFrag settingsFrag;
@@ -56,7 +58,7 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
 
         infoFrag = new InfoFrag();
         Bundle info = new Bundle();
-        info.putString("connected", what);
+        info.putString("connected", type);
         infoFrag.setArguments(info);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment, infoFrag).commit();
 
@@ -111,10 +113,15 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        if(WiFiDirectReceiver.connected){
+            this.type = settingsFrag.getType();
+        }
+        else{
+            this.type = null;
+        }
         if (id == R.id.nav_home) {
             Bundle info = new Bundle();
-            info.putString("connected", what);
+            info.putString("connected", type);
             infoFrag.setArguments(info);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, infoFrag).commit();
         } else if (id == R.id.nav_trans) {
@@ -148,21 +155,6 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    public void onConnectionInfo(String what, phonesIps phonesIps) {
-        this.what = what;
-        this.phonesIps = phonesIps;
-        if(this.what == null && this.phonesIps == null){
-            Toast.makeText(getApplicationContext(), "Error: No connection established", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            System.out.println(phonesIps.getServerIp());
-            System.out.println(phonesIps.getClientIp());
-            menu.findItem(R.id.con_status).setVisible(true);
-            menu.findItem(R.id.con_status).setTitle(this.what);
-        }
     }
 
     public Menu getMenu(){

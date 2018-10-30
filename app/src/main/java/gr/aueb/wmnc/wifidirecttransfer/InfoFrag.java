@@ -11,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
+
 public class InfoFrag extends Fragment {
 
     private Menu menu;
@@ -22,17 +24,18 @@ public class InfoFrag extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.info_frag, container, false);
         setHasOptionsMenu(true);
-        type = getArguments().getString("person");
+        type = getArguments().getString("connected");
         return view;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if(type != null){
-            menu.findItem(R.id.cancel).setVisible(true);
-            menu.findItem(R.id.cancel).setEnabled(true);
-            menu.findItem(R.id.con_status).setVisible(true);
-            menu.findItem(R.id.con_status).setTitle(type);
+        this.menu = menu;
+        if(WiFiDirectReceiver.connected){
+            addItemsToUI();
+        }
+        else{
+            removeItemFromUI();
         }
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -41,11 +44,26 @@ public class InfoFrag extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if(type != null){
+        if(WiFiDirectReceiver.connected){
             if(id == R.id.cancel){
                 ((DrawerMain)getActivity()).getSettingsFrag().cancelConnection();
+                removeItemFromUI();
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void addItemsToUI(){
+        menu.findItem(R.id.cancel).setVisible(true);
+        menu.findItem(R.id.cancel).setEnabled(true);
+        menu.findItem(R.id.con_status).setVisible(true);
+        menu.findItem(R.id.con_status).setTitle(type);
+    }
+
+    public void removeItemFromUI(){
+        menu.findItem(R.id.cancel).setVisible(false);
+        menu.findItem(R.id.cancel).setEnabled(false);
+        menu.findItem(R.id.con_status).setVisible(false);
+        menu.findItem(R.id.con_status).setTitle("");
     }
 }
