@@ -127,7 +127,6 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 mManager.requestConnectionInfo(mChannel, connectionInfoListener);
             }
             else{
-                System.out.println("pass");
                 connected = false;
                 type = "";
                 UIUpdater.updateUI(menu, type);
@@ -198,16 +197,18 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         public void onDnsSdServiceAvailable(String s, String s1, WifiP2pDevice wifiP2pDevice) {
             wifiP2pDevice.deviceName = availableServices.containsKey(wifiP2pDevice.deviceAddress) ? availableServices.get(wifiP2pDevice.deviceAddress) : wifiP2pDevice.deviceName;
             Toast.makeText(mActivity.getApplicationContext(), s, Toast.LENGTH_SHORT).show();
-
-            services.add(wifiP2pDevice);
-            serviceDeviceNamesL.add(wifiP2pDevice.deviceName);
-            serviceDeviceNames = new String[services.size()];
-            serviceDevices = new WifiP2pDevice[services.size()];
-            int k = 0;
-            for(WifiP2pDevice i : services){
-                serviceDeviceNames[k] = serviceDeviceNamesL.get(k);
-                serviceDevices[k] = i;
-                k++;
+            System.out.println("Service Available");
+            if(!services.contains(wifiP2pDevice)){
+                services.add(wifiP2pDevice);
+                serviceDeviceNamesL.add(s);
+                serviceDeviceNames = new String[services.size()];
+                serviceDevices = new WifiP2pDevice[services.size()];
+                int k = 0;
+                for(WifiP2pDevice i : services){
+                    serviceDeviceNames[k] = serviceDeviceNamesL.get(k);
+                    serviceDevices[k] = i;
+                    k++;
+                }
             }
             ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(mActivity.getApplicationContext(), R.layout.simple_list_item_1, serviceDeviceNames);
             listView.setAdapter(adapter2);
@@ -232,14 +233,6 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
             }
         });
         hasService = true;
-    }
-
-
-
-
-    public void discoverServices(){
-
-
     }
 
     public void destroyService(){
@@ -344,6 +337,24 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
             @Override
             public void onFailure(int reason) {
                 Toast.makeText(mActivity.getApplicationContext(), "Connection falied", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void selectService(int pos){
+        final WifiP2pDevice device = serviceDevices[pos];
+        final String serviceName = serviceDeviceNames[pos];
+        WifiP2pConfig config = new WifiP2pConfig();
+        config.deviceAddress = device.deviceAddress;
+        mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(mActivity.getApplicationContext(), "Connected to Service " + serviceName, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int i) {
+                Toast.makeText(mActivity.getApplicationContext(), "Connection to Service Failed", Toast.LENGTH_SHORT).show();
             }
         });
     }

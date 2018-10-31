@@ -83,7 +83,7 @@ public class SettingsFrag extends Fragment{
         listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                wiFiDirectReceiver.select(position);
+                wiFiDirectReceiver.selectService(position);
                 if(WiFiDirectReceiver.connected){
                     phonesIps = wiFiDirectReceiver.getPhoneIps();
                 }

@@ -1,6 +1,7 @@
 package gr.aueb.wmnc.wifidirecttransfer;
 
 import android.app.Activity;
+import android.net.wifi.p2p.WifiP2pConfig;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,6 +34,10 @@ public class ServiceFrag extends Fragment {
         wiFiDirectReceiver.initialize(this.getActivity());
 
         serviceButton = (Button) view.findViewById(R.id.create_service);
+
+        if(WiFiDirectReceiver.hasService){
+            serviceButton.setText("Disable Service");
+        }
 
         serviceButton.setOnClickListener(new View.OnClickListener() {
             @Override
