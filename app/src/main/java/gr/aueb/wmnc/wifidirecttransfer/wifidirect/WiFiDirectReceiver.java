@@ -188,7 +188,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
     private WifiP2pManager.DnsSdTxtRecordListener txtRecordListener = new WifiP2pManager.DnsSdTxtRecordListener() {
         @Override
         public void onDnsSdTxtRecordAvailable(String s, Map<String, String> map, WifiP2pDevice wifiP2pDevice) {
-            availableServices.put(wifiP2pDevice.deviceAddress, availableServices.get("Name"));
+            availableServices.put(wifiP2pDevice.deviceAddress, map.get("name"));
         }
     };
 
@@ -211,16 +211,16 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 }
             }
             ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(mActivity.getApplicationContext(), R.layout.simple_list_item_1, serviceDeviceNames);
-            listView.setAdapter(adapter2);
+            listView2.setAdapter(adapter2);
         }
     };
 
     public void startService(){
         Map service_info = new HashMap();
-        service_info.put("Port", "4200");
+        service_info.put("port", "4200");
         service_info.put("available", "visible");
-        service_info.put("Name", "WMNC " + WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
-        WifiP2pDnsSdServiceInfo wmnc_service_info = WifiP2pDnsSdServiceInfo.newInstance("WMNC " + WifiP2pManager.EXTRA_WIFI_P2P_DEVICE, "_presence._tcp", service_info);
+        service_info.put("name", "WMNC " + WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
+        WifiP2pDnsSdServiceInfo wmnc_service_info = WifiP2pDnsSdServiceInfo.newInstance("WMNC", "_presence._tcp", service_info);
         mManager.addLocalService(mChannel, wmnc_service_info, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -300,6 +300,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 Toast.makeText(mActivity.getApplicationContext(), "Service Discovery Failed", Toast.LENGTH_SHORT).show();
             }
         });
+
         this.listView = listView;
         this.listView2 = listView2;
     }
