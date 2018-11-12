@@ -216,15 +216,17 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
     };
 
     public void startService(){
-        Map service_info = new HashMap();
-        service_info.put("port", "4200");
-        service_info.put("available", "visible");
-        service_info.put("name", "WMNC " + WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
-        WifiP2pDnsSdServiceInfo wmnc_service_info = WifiP2pDnsSdServiceInfo.newInstance("WMNC", "_presence._tcp", service_info);
-        mManager.addLocalService(mChannel, wmnc_service_info, new WifiP2pManager.ActionListener() {
+        /*WifiP2pDevice current = mActivity.getIntent().getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
+        String currentName = current.deviceName;*/
+        Map record = new HashMap();
+        record.put("listenport", "4200");
+        //record.put("name", currentName);
+        record.put("available", "visible");
+        WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("WMNC", "_presence._tcp", record);
+        mManager.addLocalService(mChannel, serviceInfo, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
-                Toast.makeText(mActivity.getApplicationContext(), "Service Created Successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity.getApplicationContext(), "Created Service Successfully", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -262,7 +264,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         return mManager;
     }
 
-    public void discover(ListView listView, ListView listView2){
+    public void discover(final ListView listView, final ListView listView2){
         mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -276,31 +278,59 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 Toast.makeText(mActivity.getApplicationContext(), "Discovery Failed", Toast.LENGTH_SHORT).show();
             }
         });
+        WifiP2pManager.DnsSdTxtRecordListener txtRecordListener = new WifiP2pManager.DnsSdTxtRecordListener() {
+            @Override
+            public void onDnsSdTxtRecordAvailable(String s, Map<String, String> map, WifiP2pDevice wifiP2pDevice) {
+                availableServices.put(wifiP2pDevice.deviceAddress, wifiP2pDevice.deviceName);
+            }
+        };
+        WifiP2pManager.DnsSdServiceResponseListener serviceResponseListener = new WifiP2pManager.DnsSdServiceResponseListener() {
+            @Override
+            public void onDnsSdServiceAvailable(String s, String s1, WifiP2pDevice wifiP2pDevice) {
+                wifiP2pDevice.deviceName = availableServices.containsKey(wifiP2pDevice.deviceAddress)?availableServices.get(wifiP2pDevice.deviceAddress):wifiP2pDevice.deviceName;
+                if(!services.contains(wifiP2pDevice)){
+                    services.add(wifiP2pDevice);
+                    serviceDeviceNames = new String[services.size()];
+                    serviceDevices = new WifiP2pDevice[services.size()];
+                    int k = 0;
+                    for(WifiP2pDevice i : services){
+                        serviceDeviceNames[k] = i.deviceName;
+                        serviceDevices[k] = i;
+                        k++;
+                    }
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(mActivity.getApplicationContext(), R.layout.simple_list_item_1, serviceDeviceNames);
+                    listView2.setAdapter(adapter);
+                }
+                if(services.size() == 0){
+                    Toast.makeText(mActivity.getApplicationContext(), "No services found", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
         mManager.setDnsSdResponseListeners(mChannel, serviceResponseListener, txtRecordListener);
         WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
         mManager.addServiceRequest(mChannel, serviceRequest, new WifiP2pManager.ActionListener() {
+
             @Override
             public void onSuccess() {
-                Toast.makeText(mActivity.getApplicationContext(), "Created Service Listener", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void onFailure(int i) {
-                Toast.makeText(mActivity.getApplicationContext(), "Service Listener Creation Failed", Toast.LENGTH_SHORT).show();
+
             }
         });
         mManager.discoverServices(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
-                Toast.makeText(mActivity.getApplicationContext(), "Service Discovery Started", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
             public void onFailure(int i) {
-                Toast.makeText(mActivity.getApplicationContext(), "Service Discovery Failed", Toast.LENGTH_SHORT).show();
+
             }
         });
-
         this.listView = listView;
         this.listView2 = listView2;
     }
