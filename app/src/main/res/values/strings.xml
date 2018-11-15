@@ -23,4 +23,5 @@
     <string name="person2_github"><a href="https://github.com/marprok">https://github.com/marprok</a></string>
     <string name="person3_github"><a href="https://github.com/GeorgeChatzo">https://github.com/GeorgeChatzo</a></string>
     <string name="services_info">This is the services tab. If you want to create a service so as to be visible and other devices can connect with you, press the Create Service button.</string>
+    <string name="message">Enter Message</string>
 </resources>

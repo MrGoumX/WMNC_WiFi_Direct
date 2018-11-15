@@ -30,8 +30,10 @@ public class ServiceFrag extends Fragment {
 
         setHasOptionsMenu(true);
 
-        wiFiDirectReceiver = WiFiDirectReceiver.getInstance();
-        wiFiDirectReceiver.initialize(this.getActivity());
+        /*wiFiDirectReceiver = WiFiDirectReceiver.getInstance();
+        wiFiDirectReceiver.initialize(this.getActivity());*/
+
+        wiFiDirectReceiver = ((DrawerMain)getActivity()).getWiFiDirectReceiver();
 
         serviceButton = (Button) view.findViewById(R.id.create_service);
 

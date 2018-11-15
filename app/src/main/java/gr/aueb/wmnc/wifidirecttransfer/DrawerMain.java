@@ -28,6 +28,8 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
     private InfoFrag infoFrag;
     private SettingsFrag settingsFrag;
     private ServiceFrag serviceFrag;
+    private ChatFrag chatFrag;
+    private WiFiDirectReceiver wiFiDirectReceiver;
     protected Menu menu;
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 0; // It is necessary for device scanning
                                                                     // after Android version 7 and on
@@ -63,6 +65,12 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
 
         settingsFrag = new SettingsFrag();
         serviceFrag = new ServiceFrag();
+        chatFrag = new ChatFrag();
+
+        wiFiDirectReceiver = WiFiDirectReceiver.getInstance();
+        wiFiDirectReceiver.initialize(this);
+
+
     }
 
     @Override
@@ -121,7 +129,7 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         } else if (id == R.id.nav_trans) {
 
         } else if (id == R.id.nav_chat) {
-
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment, chatFrag).commit();
         } else if (id == R.id.nav_settings) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, settingsFrag).commit();
         } else if(id == R.id.nav_services){
@@ -149,6 +157,10 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public WiFiDirectReceiver getWiFiDirectReceiver() {
+        return wiFiDirectReceiver;
     }
 
     public void setPhonesIps(phonesIps phonesIps){
