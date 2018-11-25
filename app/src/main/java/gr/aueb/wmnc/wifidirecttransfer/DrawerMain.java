@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps;
 import gr.aueb.wmnc.wifidirecttransfer.fragments.ChatFrag;
+import gr.aueb.wmnc.wifidirecttransfer.fragments.FileTransFrag;
 import gr.aueb.wmnc.wifidirecttransfer.fragments.InfoFrag;
 import gr.aueb.wmnc.wifidirecttransfer.fragments.PersonFrag;
 import gr.aueb.wmnc.wifidirecttransfer.fragments.ServiceFrag;
@@ -35,10 +36,12 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
     private SettingsFrag settingsFrag;
     private ServiceFrag serviceFrag;
     private ChatFrag chatFrag;
+    private FileTransFrag fileTransFrag;
     private WiFiDirectReceiver wiFiDirectReceiver;
     protected Menu menu;
     private static final int PERMISSION_ACCESS_COARSE_LOCATION = 0; // It is necessary for device scanning
                                                                     // after Android version 7 and on
+    private static final int PERMSSION_WRITE_EXTERNAL_STORAGE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,13 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                         PERMISSION_ACCESS_COARSE_LOCATION);
+            }
+        }
+
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        PERMSSION_WRITE_EXTERNAL_STORAGE);
             }
         }
 
@@ -72,6 +82,7 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         settingsFrag = new SettingsFrag();
         serviceFrag = new ServiceFrag();
         chatFrag = new ChatFrag();
+        fileTransFrag = new FileTransFrag();
 
         wiFiDirectReceiver = WiFiDirectReceiver.getInstance();
         wiFiDirectReceiver.initialize(this);
@@ -133,14 +144,19 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         if (id == R.id.nav_home) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, infoFrag).commit();
         } else if (id == R.id.nav_trans) {
-
+            /*if(WiFiDirectReceiver.connected){
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment, fileTransFrag).commit();
+            }
+            else{
+                Toast.makeText(getApplicationContext(), "Not connected yet", Toast.LENGTH_SHORT).show();
+            }*/
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment, fileTransFrag).commit();
         } else if (id == R.id.nav_chat) {
             if(WiFiDirectReceiver.connected){
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment, chatFrag).commit();
             }
             else{
                 Toast.makeText(getApplicationContext(), "Not connected yet", Toast.LENGTH_SHORT).show();
-
             }
         } else if (id == R.id.nav_settings) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, settingsFrag).commit();
