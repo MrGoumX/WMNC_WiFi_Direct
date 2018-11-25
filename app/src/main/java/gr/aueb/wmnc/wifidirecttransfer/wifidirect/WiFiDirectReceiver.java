@@ -15,15 +15,11 @@ import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
-import android.net.wifi.p2p.nsd.WifiP2pServiceRequest;
 import android.view.Menu;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TabHost;
 import android.widget.Toast;
 
-import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,14 +28,11 @@ import java.util.Map;
 
 import gr.aueb.wmnc.wifidirecttransfer.DrawerMain;
 import gr.aueb.wmnc.wifidirecttransfer.R;
-import gr.aueb.wmnc.wifidirecttransfer.SettingsFrag;
-import gr.aueb.wmnc.wifidirecttransfer.UIUpdater;
+import gr.aueb.wmnc.wifidirecttransfer.ui.UIUpdater;
 import gr.aueb.wmnc.wifidirecttransfer.logic.IPGiver;
 import gr.aueb.wmnc.wifidirecttransfer.logic.IPRequester;
-import gr.aueb.wmnc.wifidirecttransfer.onConnectionInfo;
-import gr.aueb.wmnc.wifidirecttransfer.phonesIps;
-import gr.aueb.wmnc.wifidirecttransfer.postConnectionIps;
-import gr.aueb.wmnc.wifidirecttransfer.onConnectionInfo;
+import gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps;
+import gr.aueb.wmnc.wifidirecttransfer.connections.postConnectionIps;
 
 import static android.os.Looper.getMainLooper;
 
@@ -338,7 +331,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
 
             @Override
             public void onFailure(int reason) {
-                Toast.makeText(mActivity.getApplicationContext(), "Connection falied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mActivity.getApplicationContext(), "Connection failed", Toast.LENGTH_SHORT).show();
             }
         });
     }

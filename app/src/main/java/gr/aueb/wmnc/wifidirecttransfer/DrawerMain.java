@@ -3,7 +3,6 @@ package gr.aueb.wmnc.wifidirecttransfer;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.icu.text.IDNA;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,13 +17,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps;
+import gr.aueb.wmnc.wifidirecttransfer.fragments.ChatFrag;
+import gr.aueb.wmnc.wifidirecttransfer.fragments.InfoFrag;
+import gr.aueb.wmnc.wifidirecttransfer.fragments.PersonFrag;
+import gr.aueb.wmnc.wifidirecttransfer.fragments.ServiceFrag;
+import gr.aueb.wmnc.wifidirecttransfer.fragments.SettingsFrag;
+import gr.aueb.wmnc.wifidirecttransfer.ui.UIUpdater;
 import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
 
 public class DrawerMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private WifiManager wifiManager;
     private String type;
-    private phonesIps phonesIps;
+    private gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps phonesIps;
     private InfoFrag infoFrag;
     private SettingsFrag settingsFrag;
     private ServiceFrag serviceFrag;

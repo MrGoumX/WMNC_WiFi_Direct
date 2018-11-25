@@ -1,4 +1,4 @@
-package gr.aueb.wmnc.wifidirecttransfer;
+package gr.aueb.wmnc.wifidirecttransfer.connections;
 
 import java.io.Serializable;
 

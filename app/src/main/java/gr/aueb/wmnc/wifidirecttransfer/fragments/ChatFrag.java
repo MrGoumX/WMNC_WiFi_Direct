@@ -1,4 +1,4 @@
-package gr.aueb.wmnc.wifidirecttransfer;
+package gr.aueb.wmnc.wifidirecttransfer.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import gr.aueb.wmnc.wifidirecttransfer.R;
 
 public class ChatFrag extends Fragment {
 

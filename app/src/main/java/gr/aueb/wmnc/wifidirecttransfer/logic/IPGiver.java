@@ -7,8 +7,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import gr.aueb.wmnc.wifidirecttransfer.phonesIps;
-import gr.aueb.wmnc.wifidirecttransfer.postConnectionIps;
+import gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps;
+import gr.aueb.wmnc.wifidirecttransfer.connections.postConnectionIps;
 
 public class IPGiver extends AsyncTask<Void, Void, phonesIps> {
 

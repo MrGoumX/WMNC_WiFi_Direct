@@ -1,7 +1,8 @@
-package gr.aueb.wmnc.wifidirecttransfer;
+package gr.aueb.wmnc.wifidirecttransfer.ui;
 
 import android.view.Menu;
 
+import gr.aueb.wmnc.wifidirecttransfer.R;
 import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
 
 public class UIUpdater {
