@@ -1,4 +1,4 @@
-package gr.aueb.wmnc.wifidirecttransfer;
+package gr.aueb.wmnc.wifidirecttransfer.fragments;
 
 import android.os.Bundle;
 import android.provider.Contacts;
@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import gr.aueb.wmnc.wifidirecttransfer.R;
+import gr.aueb.wmnc.wifidirecttransfer.ui.UIUpdater;
 import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
 
 public class InfoFrag extends Fragment {

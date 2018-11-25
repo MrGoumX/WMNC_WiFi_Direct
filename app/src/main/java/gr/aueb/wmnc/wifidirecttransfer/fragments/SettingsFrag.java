@@ -1,4 +1,4 @@
-package gr.aueb.wmnc.wifidirecttransfer;
+package gr.aueb.wmnc.wifidirecttransfer.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -14,9 +14,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import gr.aueb.wmnc.wifidirecttransfer.DrawerMain;
+import gr.aueb.wmnc.wifidirecttransfer.R;
+import gr.aueb.wmnc.wifidirecttransfer.ui.UIUpdater;
+import gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps;
 import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
-
-import static android.os.Looper.getMainLooper;
 
 public class SettingsFrag extends Fragment{
 
@@ -24,7 +26,7 @@ public class SettingsFrag extends Fragment{
     private ListView listView, listView2;
     private View view;
     private Menu menu;
-    private phonesIps phonesIps;
+    private gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps phonesIps;
     private String type;
     private Activity activity;
     private boolean connected = false;

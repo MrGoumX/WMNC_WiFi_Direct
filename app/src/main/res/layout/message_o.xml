@@ -9,7 +9,7 @@
 
     <View
         android:id="@+id/avatar"
-        android:layout_alignLParenteft="true"
+        android:layout_alignParentLeft="true"
         android:scaleType="centerInside"
         android:background="@drawable/circle"
         android:layout_width="34dp"

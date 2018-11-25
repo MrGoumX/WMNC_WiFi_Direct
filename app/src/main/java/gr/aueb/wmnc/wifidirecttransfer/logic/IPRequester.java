@@ -4,16 +4,12 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import gr.aueb.wmnc.wifidirecttransfer.phonesIps;
-import gr.aueb.wmnc.wifidirecttransfer.postConnectionIps;
+import gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps;
+import gr.aueb.wmnc.wifidirecttransfer.connections.postConnectionIps;
 
 public class IPRequester extends AsyncTask<String, Void, phonesIps> {
 
