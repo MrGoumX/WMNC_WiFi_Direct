@@ -56,6 +56,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
     private phonesIps phoneIps;
     private WiFiDirectReceiver thisClass = this;
     private ListView listView, listView2;
+    private boolean isOwner = false;
     private static boolean isInitialized = false;
 
     private static WiFiDirectReceiver instance = null;
@@ -147,6 +148,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         @Override
         public void onConnectionInfoAvailable(WifiP2pInfo info) {
         final InetAddress owner = info.groupOwnerAddress;
+        isOwner = info.isGroupOwner;
         if(!connected){
             if(info.groupFormed && info.isGroupOwner) {
                 type = "Host";
@@ -371,6 +373,13 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         else{
             ((DrawerMain)mActivity).setPhonesIps(phonesIps);
         }
+    }
+
+    public boolean isOwner() {
+        if(connected){
+            return isOwner;
+        }
+        return Boolean.parseBoolean(null);
     }
 
     public void setMenu(Menu menu){
