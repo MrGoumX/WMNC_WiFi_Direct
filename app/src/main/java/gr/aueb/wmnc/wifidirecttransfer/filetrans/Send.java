@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -26,12 +27,16 @@ public class Send extends AsyncTask<Object, Void, Void> {
     @Override
     protected Void doInBackground(Object... params) {
         try {
+            String ip = (String) params[1];
+            System.out.println(ip);
             Socket socket = new Socket((String) params[1], 4201);
+            System.out.println(params[1]);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
             out.writeObject("SEND_FILE");
             out.flush();
-            out.close();
-            socket.close();
+            //out.close();
+            //socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

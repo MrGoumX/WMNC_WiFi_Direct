@@ -10,6 +10,8 @@ import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -20,6 +22,7 @@ import android.widget.ListView;
 import gr.aueb.wmnc.wifidirecttransfer.R;
 import gr.aueb.wmnc.wifidirecttransfer.chat.client.SimpleChatClient;
 import gr.aueb.wmnc.wifidirecttransfer.chat.server.SimpleChatServer;
+import gr.aueb.wmnc.wifidirecttransfer.ui.UIUpdater;
 import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
 import gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps;
 
@@ -33,6 +36,7 @@ public class ChatFrag extends Fragment {
     private ImageButton send;
     private EditText chat;
     private ListView messages;
+    private Menu menu;
 
     @Nullable
     @Override
@@ -56,6 +60,13 @@ public class ChatFrag extends Fragment {
         action();
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        this.menu = menu;
+        UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
     }
 
     private void action() {

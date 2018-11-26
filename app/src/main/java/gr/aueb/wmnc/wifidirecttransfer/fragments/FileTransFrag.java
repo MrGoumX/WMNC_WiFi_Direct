@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -20,6 +22,7 @@ import gr.aueb.wmnc.wifidirecttransfer.R;
 import gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps;
 import gr.aueb.wmnc.wifidirecttransfer.filetrans.Send;
 import gr.aueb.wmnc.wifidirecttransfer.filetrans.Sense;
+import gr.aueb.wmnc.wifidirecttransfer.ui.UIUpdater;
 import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
 
 public class FileTransFrag extends Fragment {
@@ -29,6 +32,7 @@ public class FileTransFrag extends Fragment {
     private Activity mActivity;
     private Uri uri;
     private phonesIps phonesIps;
+    private Menu menu;
 
     private static final int READ_REQUEST_CODE = 42;
 
@@ -44,14 +48,25 @@ public class FileTransFrag extends Fragment {
         sendf = (Button) view.findViewById(R.id.sendf);
         filename = (TextView) view.findViewById(R.id.filename);
 
-        phonesIps = WiFiDirectReceiver.getInstance().getPhoneIps();
+        //phonesIps = WiFiDirectReceiver.getInstance().getPhoneIps();
 
         action();
 
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        this.menu = menu;
+        UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
+    }
+
     private void action() {
+        if(WiFiDirectReceiver.connected){
+            phonesIps = WiFiDirectReceiver.getInstance().getPhoneIps();
+        }
+        System.out.println("HALLO?");
         Sense fileSense = new Sense();
         fileSense.execute();
         choose.setOnClickListener(new View.OnClickListener() {
@@ -70,10 +85,17 @@ public class FileTransFrag extends Fragment {
     }
 
     public void initiateMission(){
+        System.out.println(uri.toString());
         if(uri != null){
             if(WiFiDirectReceiver.connected){
-                Send sendFile = new Send();
-                sendFile.execute(uri, phonesIps.getServerIp());
+                if(WiFiDirectReceiver.isHost){
+                    Send sendFile = new Send();
+                    sendFile.execute(uri, phonesIps.getClientIp());
+                }
+                else{
+                    Send sendFile = new Send();
+                    sendFile.execute(uri, phonesIps.getServerIp());
+                }
             }
         }
         else{
@@ -84,12 +106,13 @@ public class FileTransFrag extends Fragment {
     public void search(){
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == READ_REQUEST_CODE && requestCode == Activity.RESULT_OK){
+        if(requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK){
             uri = null;
             if(data != null){
                 uri = data.getData();

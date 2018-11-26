@@ -2,6 +2,7 @@ package gr.aueb.wmnc.wifidirecttransfer.filetrans;
 
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

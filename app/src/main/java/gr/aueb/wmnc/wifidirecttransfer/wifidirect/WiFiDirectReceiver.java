@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
@@ -58,10 +59,12 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
     private ListView listView, listView2;
     private boolean isOwner = false;
     private static boolean isInitialized = false;
+    private InetAddress owner;
 
     private static WiFiDirectReceiver instance = null;
     public static boolean connected = false;
     public static boolean hasService = false;
+    public static boolean isHost = false;
     public static String type = "";
 
     public static WiFiDirectReceiver getInstance()
@@ -110,18 +113,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         else if(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)){
             if(mManager != null){
                 mManager.requestPeers(mChannel, peerListListener);
-                WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
-                mManager.addServiceRequest(mChannel, serviceRequest, new WifiP2pManager.ActionListener() {
-                    @Override
-                    public void onSuccess() {
 
-                    }
-
-                    @Override
-                    public void onFailure(int i) {
-
-                    }
-                });
             }
         }
         else if(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)){
@@ -147,20 +139,17 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         @SuppressLint("RestrictedApi")
         @Override
         public void onConnectionInfoAvailable(WifiP2pInfo info) {
-        final InetAddress owner = info.groupOwnerAddress;
+        owner = info.groupOwnerAddress;
         isOwner = info.isGroupOwner;
         if(!connected){
-            if(info.groupFormed && info.isGroupOwner) {
+            if(info.isGroupOwner) {
+                System.out.println("im host");
                 type = "Host";
-                IPGiver server = new IPGiver();
-                server.bind = thisClass;
-                server.execute();
+                isHost = true;
             }
             else {
+                System.out.println("im guest");
                 type = "Guest";
-                IPRequester client = new IPRequester();
-                client.bind = thisClass;
-                client.execute(owner.toString());
             }
             connected = true;
             UIUpdater.updateUI(menu, type);
@@ -229,6 +218,16 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         record.put("listenport", "4200");
         record.put("name", "WMNC " + currentName);
         record.put("available", "visible");
+        mManager.createGroup(mChannel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+            }
+
+            @Override
+            public void onFailure(int reason) {
+
+            }
+        });
         WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("WMNC" + currentName, "_presence._tcp", record);
         mManager.addLocalService(mChannel, serviceInfo, new WifiP2pManager.ActionListener() {
             @Override
@@ -285,6 +284,18 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 Toast.makeText(mActivity.getApplicationContext(), "Discovery Failed", Toast.LENGTH_SHORT).show();
             }
         });
+        WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
+        mManager.addServiceRequest(mChannel, serviceRequest, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(int i) {
+
+            }
+        });
         mManager.setDnsSdResponseListeners(mChannel, serviceResponseListener, txtRecordListener);
         mManager.discoverServices(mChannel, new WifiP2pManager.ActionListener() {
             @Override
@@ -323,8 +334,10 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
 
     public void select(int pos){
         final WifiP2pDevice device = devices[pos];
-        WifiP2pConfig config = new WifiP2pConfig();
+        final WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = device.deviceAddress;
+        config.wps.setup = WpsInfo.PBC;
+        config.groupOwnerIntent = 15;
         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -343,10 +356,13 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         final String serviceName = serviceDeviceNames[pos];
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = device.deviceAddress;
+        config.wps.setup = WpsInfo.PBC;
+        config.groupOwnerIntent = 15;
         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(mActivity.getApplicationContext(), "Connected to Service " + serviceName, Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
@@ -361,6 +377,22 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
     }
 
     public phonesIps getPhoneIps(){
+        if(connected){
+            if(isHost) {
+                System.out.println("im host");
+                IPGiver server = new IPGiver();
+                server.bind = thisClass;
+                server.execute();
+            }
+            else {
+                System.out.println("im guest");
+                type = "Guest";
+                IPRequester client = new IPRequester();
+                client.bind = thisClass;
+                client.execute(owner.toString());
+            }
+            //UIUpdater.updateUI(menu, type);
+        }
         return phoneIps;
     }
 
