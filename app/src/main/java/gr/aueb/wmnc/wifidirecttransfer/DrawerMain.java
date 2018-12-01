@@ -39,26 +39,22 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
     private FileTransFrag fileTransFrag;
     private WiFiDirectReceiver wiFiDirectReceiver;
     protected Menu menu;
-    private static final int PERMISSION_ACCESS_COARSE_LOCATION = 0; // It is necessary for device scanning
-                                                                    // after Android version 7 and on
-    private static final int PERMSSION_WRITE_EXTERNAL_STORAGE = 0;
+
+    private static final int ACCEPTED_PERMISSIONS = 0; // Necessary for Android wifi scanning & for writing files to external storage
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer_main);
 
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        PERMISSION_ACCESS_COARSE_LOCATION);
-            }
-        }
+        String[] perms = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        PERMSSION_WRITE_EXTERNAL_STORAGE);
+                requestPermissions(perms,
+                        ACCEPTED_PERMISSIONS);
             }
         }
 

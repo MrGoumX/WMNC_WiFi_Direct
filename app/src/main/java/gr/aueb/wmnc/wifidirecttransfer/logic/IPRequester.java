@@ -29,9 +29,17 @@ public class IPRequester extends AsyncTask<String, Void, phonesIps> {
             try{
                 // create the socket and initialize the streams
                 String ip = strings[0].substring(1);
-                System.out.println(ip);
                 socket = new Socket(ip, 4200);
                 out = new ObjectOutputStream(socket.getOutputStream());
+                in = new ObjectInputStream(socket.getInputStream());
+                client = (String)in.readObject();
+                out.writeObject(ip);
+                out.flush();
+                server = ip;
+                System.out.println("Host");
+                System.out.println("Server: " + server);
+                System.out.println("Client: " + client);
+                /*out = new ObjectOutputStream(socket.getOutputStream());
                 in = new ObjectInputStream(socket.getInputStream());
                 server = socket.getInetAddress().toString().substring(1);
                 // send the GroupOwner ip to initialize the protocol
@@ -39,7 +47,7 @@ public class IPRequester extends AsyncTask<String, Void, phonesIps> {
                 out.flush();
                 // receive our ip address
                 client = (String)in.readObject();
-                client = client.substring(1);
+                client = client.substring(1);*/
             }
             catch (IOException|ClassNotFoundException e){
                 //e.printStackTrace();

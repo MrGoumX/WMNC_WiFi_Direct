@@ -27,7 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import gr.aueb.wmnc.wifidirecttransfer.AcceptClient;
 import gr.aueb.wmnc.wifidirecttransfer.DrawerMain;
+import gr.aueb.wmnc.wifidirecttransfer.ListenServer;
 import gr.aueb.wmnc.wifidirecttransfer.R;
 import gr.aueb.wmnc.wifidirecttransfer.ui.UIUpdater;
 import gr.aueb.wmnc.wifidirecttransfer.logic.IPGiver;
@@ -146,10 +148,20 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 System.out.println("im host");
                 type = "Host";
                 isHost = true;
+                if(!hasService){
+                    /*ListenServer listenServer = new ListenServer();
+                    listenServer.execute();*/
+                    IPGiver listenServer = new IPGiver();
+                    listenServer.execute();
+                }
             }
             else {
                 System.out.println("im guest");
                 type = "Guest";
+                /*AcceptClient accept = new AcceptClient();
+                accept.execute(info.groupOwnerAddress);*/
+                IPRequester requester = new IPRequester();
+                requester.execute(info.groupOwnerAddress.toString());
             }
             connected = true;
             UIUpdater.updateUI(menu, type);
@@ -240,6 +252,10 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 Toast.makeText(mActivity.getApplicationContext(), "Service Creation Failed", Toast.LENGTH_SHORT).show();
             }
         });
+        /*ListenServer listenServer = new ListenServer();
+        listenServer.execute();*/
+        IPGiver listenSever = new IPGiver();
+        listenSever.execute();
         hasService = true;
     }
 
@@ -417,4 +433,8 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
     public void setMenu(Menu menu){
         this.menu = menu;
     }
+
+    /*public static void reqConInfo(){
+        WiFiDirectReceiver.getInstance().mManager.requestConnectionInfo(WiFiDirectReceiver.getInstance().mChannel, WiFiDirectReceiver.getInstance().connectionInfoListener);
+    }*/
 }
