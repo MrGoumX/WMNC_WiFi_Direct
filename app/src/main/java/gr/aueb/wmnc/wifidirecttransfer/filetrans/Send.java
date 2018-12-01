@@ -35,6 +35,8 @@ public class Send extends AsyncTask<Object, Void, Void> {
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
             out.writeObject("SEND_FILE");
             out.flush();
+            //Socket sendFile = new Socket((String) params[1], 4200);
+
             //out.close();
             //socket.close();
         } catch (IOException e) {

@@ -66,7 +66,8 @@ public class FileTransFrag extends Fragment {
         if(WiFiDirectReceiver.connected){
             phonesIps = WiFiDirectReceiver.getInstance().getPhoneIps();
         }
-        System.out.println("HALLO?");
+        System.out.println(phonesIps.getClientIp());
+        System.out.println(phonesIps.getServerIp());
         Sense fileSense = new Sense();
         fileSense.execute();
         choose.setOnClickListener(new View.OnClickListener() {

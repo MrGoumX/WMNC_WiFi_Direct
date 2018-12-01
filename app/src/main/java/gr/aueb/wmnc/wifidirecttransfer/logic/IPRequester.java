@@ -39,18 +39,9 @@ public class IPRequester extends AsyncTask<String, Void, phonesIps> {
                 System.out.println("Host");
                 System.out.println("Server: " + server);
                 System.out.println("Client: " + client);
-                /*out = new ObjectOutputStream(socket.getOutputStream());
-                in = new ObjectInputStream(socket.getInputStream());
-                server = socket.getInetAddress().toString().substring(1);
-                // send the GroupOwner ip to initialize the protocol
-                out.writeObject(strings[0].substring(1));
-                out.flush();
-                // receive our ip address
-                client = (String)in.readObject();
-                client = client.substring(1);*/
             }
             catch (IOException|ClassNotFoundException e){
-                //e.printStackTrace();
+                e.printStackTrace();
             }finally
             {
                 try{
@@ -62,7 +53,7 @@ public class IPRequester extends AsyncTask<String, Void, phonesIps> {
                     }
                 }
                 catch (IOException e){
-                    //e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
         }

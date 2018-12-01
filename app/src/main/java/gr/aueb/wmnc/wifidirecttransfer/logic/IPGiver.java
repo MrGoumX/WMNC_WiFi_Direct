@@ -35,13 +35,6 @@ public class IPGiver extends AsyncTask<Void, Void, phonesIps> {
             System.out.println("Guest");
             System.out.println("Server: " + serverIp);
             System.out.println("Client: " + myIp);
-            /*clientIp = socket.getInetAddress().toString();
-            out = new ObjectOutputStream(socket.getOutputStream());
-            in = new ObjectInputStream(socket.getInputStream());
-            myIp = (String)in.readObject();
-            // send his ip back to him
-            out.writeObject(clientIp);
-            out.flush();*/
         }
         catch (IOException|ClassNotFoundException e)
         {

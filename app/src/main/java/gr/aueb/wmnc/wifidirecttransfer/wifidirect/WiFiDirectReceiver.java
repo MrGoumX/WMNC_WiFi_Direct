@@ -27,9 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import gr.aueb.wmnc.wifidirecttransfer.AcceptClient;
 import gr.aueb.wmnc.wifidirecttransfer.DrawerMain;
-import gr.aueb.wmnc.wifidirecttransfer.ListenServer;
 import gr.aueb.wmnc.wifidirecttransfer.R;
 import gr.aueb.wmnc.wifidirecttransfer.ui.UIUpdater;
 import gr.aueb.wmnc.wifidirecttransfer.logic.IPGiver;
@@ -152,6 +150,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                     /*ListenServer listenServer = new ListenServer();
                     listenServer.execute();*/
                     IPGiver listenServer = new IPGiver();
+                    listenServer.bind = thisClass;
                     listenServer.execute();
                 }
             }
@@ -161,6 +160,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 /*AcceptClient accept = new AcceptClient();
                 accept.execute(info.groupOwnerAddress);*/
                 IPRequester requester = new IPRequester();
+                requester.bind = thisClass;
                 requester.execute(info.groupOwnerAddress.toString());
             }
             connected = true;
@@ -255,6 +255,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         /*ListenServer listenServer = new ListenServer();
         listenServer.execute();*/
         IPGiver listenSever = new IPGiver();
+        listenSever.bind = this;
         listenSever.execute();
         hasService = true;
     }
@@ -393,7 +394,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
     }
 
     public phonesIps getPhoneIps(){
-        if(connected){
+        /*if(connected){
             if(isHost) {
                 System.out.println("im host");
                 IPGiver server = new IPGiver();
@@ -408,7 +409,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 client.execute(owner.toString());
             }
             //UIUpdater.updateUI(menu, type);
-        }
+        }*/
         return phoneIps;
     }
 
