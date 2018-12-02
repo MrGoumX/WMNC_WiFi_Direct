@@ -1,7 +1,10 @@
 package gr.aueb.wmnc.wifidirecttransfer.filetrans;
 
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
+import android.support.v4.graphics.PathUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -14,6 +17,9 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.Socket;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 
 public class Send extends AsyncTask<Object, Void, Void> {
     private static final int size = 1024*1024;
@@ -22,14 +28,15 @@ public class Send extends AsyncTask<Object, Void, Void> {
     private BufferedInputStream bfis;
     private File file;
     private String ip;
-    private int port = 4200;
+    private int port = 4300;
 
     @Override
     protected Void doInBackground(Object... params) {
+        System.out.println("321");
         try {
-            String ip = (String) params[1];
+            ip = (String) params[1];
             System.out.println(ip);
-            Socket socket = new Socket((String) params[1], 4201);
+            Socket socket = new Socket(ip, 4201);
             System.out.println(params[1]);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
@@ -43,8 +50,9 @@ public class Send extends AsyncTask<Object, Void, Void> {
             e.printStackTrace();
         }
 
-        Uri temp = (Uri) params[0];
-        this.file = new File(temp.toString());
+        String path = (String) params[0];
+        System.out.println(path);
+        this.file = new File(path);
         this.ip = (String) params[1];
         try{
             openFile(file);
@@ -96,7 +104,21 @@ public class Send extends AsyncTask<Object, Void, Void> {
 
     private void sendString(String str) throws IOException{
 
-        Socket sock = new Socket(ip, port);
+        Socket sock = null;
+        while(true){
+            try {
+                sock = new Socket(ip, port);
+                if(sock != null) break;
+            }
+            catch (IOException e){
+                try{
+                    Thread.sleep(1000);
+                }
+                catch (Exception e1){
+                    e1.printStackTrace();
+                }
+            }
+        }
         OutputStream os = sock.getOutputStream();
         Writer sendName = new PrintWriter(os);
         sendName.write(str);
@@ -105,4 +127,5 @@ public class Send extends AsyncTask<Object, Void, Void> {
         if (os != null) os.close();
         if (sock != null) sock.close();
     }
+
 }

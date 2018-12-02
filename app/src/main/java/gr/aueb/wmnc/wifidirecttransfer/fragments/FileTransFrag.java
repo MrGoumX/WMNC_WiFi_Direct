@@ -3,6 +3,7 @@ package gr.aueb.wmnc.wifidirecttransfer.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,7 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.net.URISyntaxException;
 
+import gr.aueb.wmnc.wifidirecttransfer.filetrans.PathUtil;
 import gr.aueb.wmnc.wifidirecttransfer.R;
 import gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps;
 import gr.aueb.wmnc.wifidirecttransfer.filetrans.Send;
@@ -32,6 +35,7 @@ public class FileTransFrag extends Fragment {
     private Activity mActivity;
     private Uri uri;
     private phonesIps phonesIps;
+    private String path;
     private Menu menu;
 
     private static final int READ_REQUEST_CODE = 42;
@@ -66,8 +70,6 @@ public class FileTransFrag extends Fragment {
         if(WiFiDirectReceiver.connected){
             phonesIps = WiFiDirectReceiver.getInstance().getPhoneIps();
         }
-        System.out.println(phonesIps.getClientIp());
-        System.out.println(phonesIps.getServerIp());
         Sense fileSense = new Sense();
         fileSense.execute();
         choose.setOnClickListener(new View.OnClickListener() {
@@ -86,16 +88,14 @@ public class FileTransFrag extends Fragment {
     }
 
     public void initiateMission(){
-        System.out.println(uri.toString());
+        Send sendFile = new Send();
         if(uri != null){
             if(WiFiDirectReceiver.connected){
                 if(WiFiDirectReceiver.isHost){
-                    Send sendFile = new Send();
-                    sendFile.execute(uri, phonesIps.getClientIp());
+                    sendFile.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, path, phonesIps.getClientIp());
                 }
                 else{
-                    Send sendFile = new Send();
-                    sendFile.execute(uri, phonesIps.getServerIp());
+                   sendFile.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, path, phonesIps.getServerIp());
                 }
             }
         }
@@ -118,6 +118,11 @@ public class FileTransFrag extends Fragment {
             if(data != null){
                 uri = data.getData();
                 filename.setText((new File(uri.toString())).getName());
+                try {
+                    path = PathUtil.getPath(mActivity.getApplicationContext(), uri);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

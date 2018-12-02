@@ -35,22 +35,26 @@ public class IPGiver extends AsyncTask<Void, Void, phonesIps> {
             System.out.println("Guest");
             System.out.println("Server: " + serverIp);
             System.out.println("Client: " + myIp);
+            out.close();
+            in.close();
+            socket.close();
+            server.close();
         }
         catch (IOException|ClassNotFoundException e)
         {
             e.printStackTrace();
         }finally
         {
-            try{
+            /*try{
                 if(out != null && in != null && socket != null && server != null){
-                    out.close();
+                    *//*out.close();
                     in.close();
                     socket.close();
-                    server.close();
+                    server.close();*//*
                 }
             }catch (IOException e){
                 e.printStackTrace();
-            }
+            }*/
         }
 
         ips = new phonesIps(serverIp, myIp);

@@ -143,7 +143,6 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         isOwner = info.isGroupOwner;
         if(!connected){
             if(info.isGroupOwner) {
-                System.out.println("im host");
                 type = "Host";
                 isHost = true;
                 if(!hasService){
@@ -155,7 +154,6 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 }
             }
             else {
-                System.out.println("im guest");
                 type = "Guest";
                 /*AcceptClient accept = new AcceptClient();
                 accept.execute(info.groupOwnerAddress);*/
@@ -258,6 +256,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         listenSever.bind = this;
         listenSever.execute();
         hasService = true;
+        //UIUpdater.updateUI(menu, type);
     }
 
     public void destroyService(){

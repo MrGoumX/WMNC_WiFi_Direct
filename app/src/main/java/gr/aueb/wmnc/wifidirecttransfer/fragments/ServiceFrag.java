@@ -58,8 +58,7 @@ public class ServiceFrag extends Fragment {
         UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
     }
 
-    private void startService()
-    {
+    private void startService() {
         if(!WiFiDirectReceiver.hasService){
             wiFiDirectReceiver.startService();
             serviceButton.setText("Disable Service");
