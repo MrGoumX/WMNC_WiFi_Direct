@@ -60,6 +60,13 @@ public class FileTransFrag extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        Sense fileSense = new Sense();
+        fileSense.execute();
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         this.menu = menu;
@@ -70,8 +77,6 @@ public class FileTransFrag extends Fragment {
         if(WiFiDirectReceiver.connected){
             phonesIps = WiFiDirectReceiver.getInstance().getPhoneIps();
         }
-        Sense fileSense = new Sense();
-        fileSense.execute();
         choose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
