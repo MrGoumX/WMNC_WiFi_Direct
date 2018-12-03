@@ -363,6 +363,9 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                     Toast.makeText(mActivity.getApplicationContext(), "Disconnect Failed", Toast.LENGTH_SHORT).show();
                 }
             });
+            if(hasService){
+                destroyService();
+            }
         }
     }
 
