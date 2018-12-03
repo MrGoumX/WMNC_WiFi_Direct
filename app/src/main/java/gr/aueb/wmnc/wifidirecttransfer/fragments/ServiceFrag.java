@@ -53,9 +53,10 @@ public class ServiceFrag extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
         this.menu = menu;
-        UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
+        wiFiDirectReceiver.setMenu(menu);
+        //UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     private void startService() {
@@ -67,5 +68,17 @@ public class ServiceFrag extends Fragment {
             wiFiDirectReceiver.destroyService();
             serviceButton.setText("Enable Service");
         }
+    }
+
+    @Override
+    public void onResume() {
+        wiFiDirectReceiver.onResume();
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        wiFiDirectReceiver.onPause();
+        super.onPause();
     }
 }

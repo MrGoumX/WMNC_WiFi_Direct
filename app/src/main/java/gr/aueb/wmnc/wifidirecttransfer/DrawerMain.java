@@ -2,6 +2,7 @@ package gr.aueb.wmnc.wifidirecttransfer;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -24,6 +25,7 @@ import gr.aueb.wmnc.wifidirecttransfer.fragments.InfoFrag;
 import gr.aueb.wmnc.wifidirecttransfer.fragments.PersonFrag;
 import gr.aueb.wmnc.wifidirecttransfer.fragments.ServiceFrag;
 import gr.aueb.wmnc.wifidirecttransfer.fragments.SettingsFrag;
+import gr.aueb.wmnc.wifidirecttransfer.ui.UIService;
 import gr.aueb.wmnc.wifidirecttransfer.ui.UIUpdater;
 import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
 
@@ -37,8 +39,9 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
     private ServiceFrag serviceFrag;
     private ChatFrag chatFrag;
     private FileTransFrag fileTransFrag;
+    private UIService uiService;
     private WiFiDirectReceiver wiFiDirectReceiver;
-    protected Menu menu;
+    public static Menu menu;
 
     private static final int ACCEPTED_PERMISSIONS = 0; // Necessary for Android wifi scanning & for writing files to external storage
 
@@ -79,11 +82,12 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         serviceFrag = new ServiceFrag();
         chatFrag = new ChatFrag();
         fileTransFrag = new FileTransFrag();
+        uiService = new UIService();
 
         wiFiDirectReceiver = WiFiDirectReceiver.getInstance();
         wiFiDirectReceiver.initialize(this);
 
-
+        startService(new Intent(this, UIService.class));
     }
 
     @Override
@@ -101,6 +105,7 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.drawer_main, menu);
         this.menu = menu;
+        //uiService.setMenu(menu);
         return true;
     }
 
@@ -116,7 +121,7 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
             if(wifiManager.isWifiEnabled()){
                 wifiManager.setWifiEnabled(false);
                 Toast.makeText(getApplicationContext(), "WiFi: Disabled", Toast.LENGTH_SHORT).show();
-                UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
+                //UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
             }
             else{
                 wifiManager.setWifiEnabled(true);
@@ -176,7 +181,7 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
             personFrag.setArguments(person);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, personFrag).commit();
         }
-        UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
+        //UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

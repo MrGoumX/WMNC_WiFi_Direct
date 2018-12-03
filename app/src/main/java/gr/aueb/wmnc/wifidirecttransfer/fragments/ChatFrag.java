@@ -66,7 +66,7 @@ public class ChatFrag extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         this.menu = menu;
-        UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
+        //UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
     }
 
     private void action() {

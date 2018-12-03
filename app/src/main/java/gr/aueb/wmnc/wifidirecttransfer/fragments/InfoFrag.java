@@ -29,7 +29,7 @@ public class InfoFrag extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
+        //UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
         super.onCreateOptionsMenu(menu, inflater);
     }
 

@@ -59,7 +59,7 @@ public class SettingsFrag extends Fragment{
         menu.findItem(R.id.refresh).setEnabled(true);
         this.menu = menu;
         wiFiDirectReceiver.setMenu(menu);
-        UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
+        //UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
         super.onCreateOptionsMenu(menu, inflater);
     }
 

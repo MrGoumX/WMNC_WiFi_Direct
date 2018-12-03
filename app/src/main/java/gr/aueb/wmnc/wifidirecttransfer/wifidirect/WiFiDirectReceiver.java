@@ -127,7 +127,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
             else{
                 connected = false;
                 type = "";
-                UIUpdater.updateUI(menu, type);
+                //UIUpdater.updateUI(menu, type);
             }
         }
         else if(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)){
@@ -162,7 +162,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 requester.execute(info.groupOwnerAddress.toString());
             }
             connected = true;
-            UIUpdater.updateUI(menu, type);
+            //UIUpdater.updateUI(menu, type);
         }
         }
     };
@@ -336,7 +336,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                     Toast.makeText(mActivity.getApplicationContext(), "Disconnect Successful", Toast.LENGTH_SHORT).show();
                     connected = false;
                     type = "";
-                    UIUpdater.updateUI(menu, type);
+                    //UIUpdater.updateUI(menu, type);
                     ((DrawerMain)mActivity).setPhonesIps(null);
                 }
 

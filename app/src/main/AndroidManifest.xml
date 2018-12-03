@@ -43,10 +43,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--<activity
-            android:name=".DrawerMain"
-            android:label="@string/title_activity_drawer_main"
-            android:theme="@style/AppTheme.NoActionBar"></activity>-->
+        <service android:name=".ui.UIService"
+            android:enabled="true"/>
     </application>
 
 </manifest>
