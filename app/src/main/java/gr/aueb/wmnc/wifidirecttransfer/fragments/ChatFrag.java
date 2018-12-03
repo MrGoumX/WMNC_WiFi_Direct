@@ -113,7 +113,9 @@ public class ChatFrag extends Fragment {
             });
             builder.show();
         }
-        mActivity.startService(new Intent(mActivity, SimpleChatClient.class));
+        if(initiated){
+            mActivity.startService(new Intent(mActivity, SimpleChatClient.class));
+        }
         //client.execute(ips.getServerIp(), name, getView(), mActivity);
     }
 

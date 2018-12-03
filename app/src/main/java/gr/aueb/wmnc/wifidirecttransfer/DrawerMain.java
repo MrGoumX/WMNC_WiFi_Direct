@@ -154,13 +154,12 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
                 Toast.makeText(getApplicationContext(), "Not connected yet", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.nav_chat) {
-            /*if(WiFiDirectReceiver.connected){
+            if(WiFiDirectReceiver.connected){
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment, chatFrag).commit();
             }
             else{
                 Toast.makeText(getApplicationContext(), "Not connected yet", Toast.LENGTH_SHORT).show();
-            }*/
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment, chatFrag).commit();
+            }
         } else if (id == R.id.nav_settings) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, settingsFrag).commit();
         } else if(id == R.id.nav_services){
