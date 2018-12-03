@@ -1,25 +1,17 @@
 package gr.aueb.wmnc.wifidirecttransfer.filetrans;
 
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
-import android.support.v4.graphics.PathUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.Socket;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 
 public class Send extends AsyncTask<Object, Void, Void> {
     private static final int size = 1024*1024;
@@ -36,12 +28,8 @@ public class Send extends AsyncTask<Object, Void, Void> {
             ip = (String) params[1];
             Socket socket = new Socket(ip, 4201);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            //ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
             out.writeObject("SEND_FILE");
             out.flush();
-            System.out.println("SENT");
-            //Socket sendFile = new Socket((String) params[1], 4200);
-
             out.close();
             socket.close();
         } catch (IOException e) {

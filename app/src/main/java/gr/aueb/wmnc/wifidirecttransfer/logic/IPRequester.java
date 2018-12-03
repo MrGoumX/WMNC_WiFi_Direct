@@ -45,19 +45,6 @@ public class IPRequester extends AsyncTask<String, Void, phonesIps> {
         }
         catch (IOException|ClassNotFoundException e){
             e.printStackTrace();
-        }finally
-        {
-            /*try{
-                if(out != null && in != null &&socket != null) {
-                    out.close();
-                    in.close();
-                    socket.close();
-                    completed = true;
-                }
-            }
-            catch (IOException e){
-                e.printStackTrace();
-            }*/
         }
         ips = new phonesIps(server, client);
         return ips;

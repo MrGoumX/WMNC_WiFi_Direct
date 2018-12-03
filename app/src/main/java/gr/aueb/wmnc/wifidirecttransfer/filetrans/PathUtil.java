@@ -12,14 +12,8 @@ import android.provider.MediaStore;
 
 import java.net.URISyntaxException;
 
-/**
- * Created by Aki on 1/7/2017.
- */
-
 public class PathUtil {
-    /*
-     * Gets the file path of the given Uri.
-     */
+
     @SuppressLint("NewApi")
     public static String getPath(Context context, Uri uri) throws URISyntaxException {
         final boolean needToCheckUri = Build.VERSION.SDK_INT >= 19;

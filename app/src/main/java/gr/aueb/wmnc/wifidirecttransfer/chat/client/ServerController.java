@@ -1,15 +1,8 @@
 package gr.aueb.wmnc.wifidirecttransfer.chat.client;
 
 import android.os.AsyncTask;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ListView;
-
 import java.io.ObjectInputStream;
 
-import gr.aueb.wmnc.wifidirecttransfer.R;
-import gr.aueb.wmnc.wifidirecttransfer.chat.MemberData;
 import gr.aueb.wmnc.wifidirecttransfer.chat.Message;
 import gr.aueb.wmnc.wifidirecttransfer.chat.MessageAdapter;
 
@@ -38,8 +31,6 @@ class ServerController extends AsyncTask<Void, Void, Void>
             }
         } catch (Exception e)
         {
-            // For debug.
-            //System.out.println("Input thread exception.");
             e.printStackTrace();
         } finally
         {

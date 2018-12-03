@@ -1,17 +1,10 @@
 package gr.aueb.wmnc.wifidirecttransfer.chat.client;
 
-import android.app.Activity;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ListView;
 
 import java.net.Socket;
 import java.io.ObjectOutputStream;
@@ -20,7 +13,6 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Random;
 
-import gr.aueb.wmnc.wifidirecttransfer.R;
 import gr.aueb.wmnc.wifidirecttransfer.chat.MemberData;
 import gr.aueb.wmnc.wifidirecttransfer.chat.MessageAdapter;
 

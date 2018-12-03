@@ -14,13 +14,10 @@ import android.widget.Button;
 
 import gr.aueb.wmnc.wifidirecttransfer.DrawerMain;
 import gr.aueb.wmnc.wifidirecttransfer.R;
-import gr.aueb.wmnc.wifidirecttransfer.ui.UIUpdater;
 import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
 
 public class ServiceFrag extends Fragment {
 
-    private Activity activity;
-    private Menu menu;
     private WiFiDirectReceiver wiFiDirectReceiver;
     private Button serviceButton;
 
@@ -30,9 +27,6 @@ public class ServiceFrag extends Fragment {
         View view = inflater.inflate(R.layout.service_frag, container, false);
 
         setHasOptionsMenu(true);
-
-        /*wiFiDirectReceiver = WiFiDirectReceiver.getInstance();
-        wiFiDirectReceiver.initialize(this.getActivity());*/
 
         wiFiDirectReceiver = ((DrawerMain)getActivity()).getWiFiDirectReceiver();
 
@@ -53,9 +47,7 @@ public class ServiceFrag extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        this.menu = menu;
         wiFiDirectReceiver.setMenu(menu);
-        //UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
         super.onCreateOptionsMenu(menu, inflater);
     }
 

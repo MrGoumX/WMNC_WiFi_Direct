@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -19,13 +18,11 @@ public class Sense extends AsyncTask<Object, Void, Void> {
             while(true){
                 socket = serverSocket.accept();
                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-                System.out.println("pass");
                 String temp = (String) in.readObject();
                 if(temp == null){
                     continue;
                 }
                 else if(temp.equals("SEND_FILE")){
-                    System.out.println("here");
                     try {
                         Thread.sleep(1000);
                         Receive receive = new Receive();

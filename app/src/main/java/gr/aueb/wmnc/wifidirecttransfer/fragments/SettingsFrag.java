@@ -39,9 +39,6 @@ public class SettingsFrag extends Fragment{
         listView = (ListView)view.findViewById(R.id.device_list);
         listView2 = (ListView)view.findViewById(R.id.service_list);
 
-        /*wiFiDirectReceiver = WiFiDirectReceiver.getInstance();
-        wiFiDirectReceiver.initialize(this.getActivity());*/
-
         wiFiDirectReceiver = ((DrawerMain)getActivity()).getWiFiDirectReceiver();
 
         this.activity = getActivity();
@@ -59,7 +56,6 @@ public class SettingsFrag extends Fragment{
         menu.findItem(R.id.refresh).setEnabled(true);
         this.menu = menu;
         wiFiDirectReceiver.setMenu(menu);
-        //UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
         super.onCreateOptionsMenu(menu, inflater);
     }
 

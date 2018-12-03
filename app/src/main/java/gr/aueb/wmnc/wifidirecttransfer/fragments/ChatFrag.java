@@ -4,27 +4,21 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ListView;
 
 import gr.aueb.wmnc.wifidirecttransfer.R;
 import gr.aueb.wmnc.wifidirecttransfer.chat.client.SimpleChatClient;
 import gr.aueb.wmnc.wifidirecttransfer.chat.server.SimpleChatServer;
-import gr.aueb.wmnc.wifidirecttransfer.ui.UIUpdater;
 import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
 import gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps;
 
@@ -35,9 +29,6 @@ public class ChatFrag extends Fragment {
     private SimpleChatServer chatServer;
     private String name;
     private phonesIps ips;
-    private ImageButton send;
-    private EditText chat;
-    private ListView messages;
     private Menu menu;
     private SimpleChatClient client;
     private boolean initiated = false;
@@ -50,10 +41,6 @@ public class ChatFrag extends Fragment {
         setHasOptionsMenu(true);
 
         mActivity = getActivity();
-
-        send = (ImageButton) view.findViewById(R.id.send);
-        chat = (EditText) view.findViewById(R.id.chat_box);
-        messages = (ListView) view.findViewById(R.id.chat_view);
 
         receiver = WiFiDirectReceiver.getInstance();
 
@@ -82,7 +69,6 @@ public class ChatFrag extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         this.menu = menu;
-        //UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
     }
 
     private void action() {
@@ -116,7 +102,6 @@ public class ChatFrag extends Fragment {
         if(initiated){
             mActivity.startService(new Intent(mActivity, SimpleChatClient.class));
         }
-        //client.execute(ips.getServerIp(), name, getView(), mActivity);
     }
 
     @Override

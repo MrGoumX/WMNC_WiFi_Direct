@@ -29,7 +29,6 @@ import java.util.Map;
 
 import gr.aueb.wmnc.wifidirecttransfer.DrawerMain;
 import gr.aueb.wmnc.wifidirecttransfer.R;
-import gr.aueb.wmnc.wifidirecttransfer.ui.UIUpdater;
 import gr.aueb.wmnc.wifidirecttransfer.logic.IPGiver;
 import gr.aueb.wmnc.wifidirecttransfer.logic.IPRequester;
 import gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps;
@@ -137,7 +136,6 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
             else{
                 connected = false;
                 type = "";
-                //UIUpdater.updateUI(menu, type);
             }
         }
         else if(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)){
@@ -156,8 +154,6 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 type = "Host";
                 isHost = true;
                 if(!hasService){
-                    /*ListenServer listenServer = new ListenServer();
-                    listenServer.execute();*/
                     IPGiver listenServer = new IPGiver();
                     listenServer.bind = thisClass;
                     listenServer.execute();
@@ -165,14 +161,11 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
             }
             else {
                 type = "Guest";
-                /*AcceptClient accept = new AcceptClient();
-                accept.execute(info.groupOwnerAddress);*/
                 IPRequester requester = new IPRequester();
                 requester.bind = thisClass;
                 requester.execute(info.groupOwnerAddress.toString());
             }
             connected = true;
-            //UIUpdater.updateUI(menu, type);
         }
         }
     };
@@ -260,13 +253,10 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 Toast.makeText(mActivity.getApplicationContext(), "Service Creation Failed", Toast.LENGTH_SHORT).show();
             }
         });
-        /*ListenServer listenServer = new ListenServer();
-        listenServer.execute();*/
         IPGiver listenSever = new IPGiver();
         listenSever.bind = this;
         listenSever.execute();
         hasService = true;
-        //UIUpdater.updateUI(menu, type);
     }
 
     public void destroyService(){
@@ -354,7 +344,6 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                     Toast.makeText(mActivity.getApplicationContext(), "Disconnect Successful", Toast.LENGTH_SHORT).show();
                     connected = false;
                     type = "";
-                    //UIUpdater.updateUI(menu, type);
                     ((DrawerMain)mActivity).setPhonesIps(null);
                 }
 
@@ -414,22 +403,6 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
     }
 
     public phonesIps getPhoneIps(){
-        /*if(connected){
-            if(isHost) {
-                System.out.println("im host");
-                IPGiver server = new IPGiver();
-                server.bind = thisClass;
-                server.execute();
-            }
-            else {
-                System.out.println("im guest");
-                type = "Guest";
-                IPRequester client = new IPRequester();
-                client.bind = thisClass;
-                client.execute(owner.toString());
-            }
-            //UIUpdater.updateUI(menu, type);
-        }*/
         return phoneIps;
     }
 
@@ -455,7 +428,4 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         this.menu = menu;
     }
 
-    /*public static void reqConInfo(){
-        WiFiDirectReceiver.getInstance().mManager.requestConnectionInfo(WiFiDirectReceiver.getInstance().mChannel, WiFiDirectReceiver.getInstance().connectionInfoListener);
-    }*/
 }

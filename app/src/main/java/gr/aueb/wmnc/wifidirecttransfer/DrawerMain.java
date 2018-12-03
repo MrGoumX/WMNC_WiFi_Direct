@@ -32,7 +32,6 @@ import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
 public class DrawerMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private WifiManager wifiManager;
-    private String type;
     private gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps phonesIps;
     private InfoFrag infoFrag;
     private SettingsFrag settingsFrag;
@@ -105,7 +104,6 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.drawer_main, menu);
         this.menu = menu;
-        //uiService.setMenu(menu);
         return true;
     }
 
@@ -183,7 +181,6 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
             personFrag.setArguments(person);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, personFrag).commit();
         }
-        //UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

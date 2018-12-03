@@ -3,7 +3,6 @@ package gr.aueb.wmnc.wifidirecttransfer.chat.client;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -19,7 +18,6 @@ public class ClientActionListener
     private ImageButton send;
     private EditText chat;
     private View view;
-    //private ListView messages;
     private MemberData memberData;
     private MessageAdapter adapter;
     private Message message;
@@ -28,9 +26,8 @@ public class ClientActionListener
     {
         this.out = out;
         this.view = view;
-        this.send = (ImageButton) view.findViewById(R.id.sendf);
+        this.send = (ImageButton) view.findViewById(R.id.send);
         this.chat = (EditText) view.findViewById(R.id.chat_box);
-        //this.messages = (ListView) view.findViewById(R.id.chat_view);
         this.memberData = memberData;
         this.adapter = adapter;
         loop();

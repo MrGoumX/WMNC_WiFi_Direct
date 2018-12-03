@@ -25,7 +25,6 @@ import gr.aueb.wmnc.wifidirecttransfer.R;
 import gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps;
 import gr.aueb.wmnc.wifidirecttransfer.filetrans.Send;
 import gr.aueb.wmnc.wifidirecttransfer.filetrans.Sense;
-import gr.aueb.wmnc.wifidirecttransfer.ui.UIUpdater;
 import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
 
 public class FileTransFrag extends Fragment {
@@ -36,7 +35,6 @@ public class FileTransFrag extends Fragment {
     private Uri uri;
     private phonesIps phonesIps;
     private String path;
-    private Menu menu;
 
     private static final int READ_REQUEST_CODE = 42;
 
@@ -51,8 +49,6 @@ public class FileTransFrag extends Fragment {
         choose = (Button) view.findViewById(R.id.choose);
         sendf = (Button) view.findViewById(R.id.sendf);
         filename = (TextView) view.findViewById(R.id.filename);
-
-        //phonesIps = WiFiDirectReceiver.getInstance().getPhoneIps();
 
         action();
 
@@ -69,8 +65,6 @@ public class FileTransFrag extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        this.menu = menu;
-        //UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
     }
 
     private void action() {

@@ -26,15 +26,12 @@ public class IPGiver extends AsyncTask<Void, Void, phonesIps> {
             // create the socket and initialize the streams
             server = new ServerSocket(4200);
             socket = server.accept();
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+            out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
             out.writeObject(socket.getInetAddress().toString().substring(1));
             out.flush();
             myIp = (String) in.readObject();
             serverIp = socket.getInetAddress().toString().substring(1);
-            System.out.println("Host");
-            System.out.println("Server: " + myIp);
-            System.out.println("Client: " + serverIp);
             out.close();
             in.close();
             socket.close();
@@ -43,18 +40,6 @@ public class IPGiver extends AsyncTask<Void, Void, phonesIps> {
         catch (IOException|ClassNotFoundException e)
         {
             e.printStackTrace();
-        }finally
-        {
-            /*try{
-                if(out != null && in != null && socket != null && server != null){
-                    *//*out.close();
-                    in.close();
-                    socket.close();
-                    server.close();*//*
-                }
-            }catch (IOException e){
-                e.printStackTrace();
-            }*/
         }
 
         ips = new phonesIps(myIp, serverIp);
