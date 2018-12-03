@@ -3,6 +3,7 @@ package gr.aueb.wmnc.wifidirecttransfer.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -101,6 +102,17 @@ public class ChatFrag extends Fragment {
 
             client.execute(ips.getServerIp(), name, send, chat, messages, mActivity);
         }
+    }
 
+    @Override
+    public void onResume() {
+        WiFiDirectReceiver.getInstance().onResumeFragments();
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        WiFiDirectReceiver.getInstance().onPause();
+        super.onPause();
     }
 }

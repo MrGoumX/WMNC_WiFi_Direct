@@ -33,17 +33,16 @@ public class InfoFrag extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+    @Override
+    public void onResume() {
+        WiFiDirectReceiver.getInstance().onResumeFragments();
+        super.onResume();
+    }
 
-        if(WiFiDirectReceiver.connected){
-            if(id == R.id.cancel){
-                ((DrawerMain)getActivity()).getSettingsFrag().cancelConnection();
-                removeItemFromUI();
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
+    @Override
+    public void onPause() {
+        WiFiDirectReceiver.getInstance().onPause();
+        super.onPause();
+    }
 
 }

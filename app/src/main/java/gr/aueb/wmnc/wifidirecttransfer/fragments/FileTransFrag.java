@@ -126,4 +126,17 @@ public class FileTransFrag extends Fragment {
             }
         }
     }
+
+    @Override
+    public void onResume() {
+        WiFiDirectReceiver.getInstance().onResumeFragments();
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        WiFiDirectReceiver.getInstance().onPause();
+        super.onPause();
+    }
+
 }

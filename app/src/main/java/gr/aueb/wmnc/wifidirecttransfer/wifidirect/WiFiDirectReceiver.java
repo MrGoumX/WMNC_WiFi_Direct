@@ -39,7 +39,7 @@ import static android.os.Looper.getMainLooper;
 
 public class WiFiDirectReceiver extends BroadcastReceiver implements postConnectionIps{
 
-    private IntentFilter intentFilter, intentFilter2;
+    private IntentFilter intentFilter, intentFilter2, intentFilter3;
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
     private WifiManager wifiManager;
@@ -93,6 +93,10 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
             intentFilter2.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
             intentFilter2.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
             intentFilter2.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+            intentFilter3 = new IntentFilter();
+            intentFilter3.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+            intentFilter3.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
             mManager = (WifiP2pManager) mActivity.getSystemService(Context.WIFI_P2P_SERVICE);
             mChannel = mManager.initialize(mActivity, getMainLooper(), null);
@@ -284,12 +288,16 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         mActivity.registerReceiver(this, intentFilter);
     }
 
-    public void onPause(){
-        mActivity.unregisterReceiver(this);
-    }
-
     public void onResumeService(){
         mActivity.registerReceiver(this, intentFilter2);
+    }
+
+    public void onResumeFragments(){
+        mActivity.registerReceiver(this, intentFilter3);
+    }
+
+    public void onPause(){
+        mActivity.unregisterReceiver(this);
     }
 
     public WifiP2pManager getManager(){
