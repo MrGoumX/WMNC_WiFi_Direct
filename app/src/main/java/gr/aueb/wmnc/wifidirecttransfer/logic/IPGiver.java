@@ -32,9 +32,9 @@ public class IPGiver extends AsyncTask<Void, Void, phonesIps> {
             out.flush();
             myIp = (String) in.readObject();
             serverIp = socket.getInetAddress().toString().substring(1);
-            System.out.println("Guest");
-            System.out.println("Server: " + serverIp);
-            System.out.println("Client: " + myIp);
+            System.out.println("Host");
+            System.out.println("Server: " + myIp);
+            System.out.println("Client: " + serverIp);
             out.close();
             in.close();
             socket.close();
@@ -57,7 +57,7 @@ public class IPGiver extends AsyncTask<Void, Void, phonesIps> {
             }*/
         }
 
-        ips = new phonesIps(serverIp, myIp);
+        ips = new phonesIps(myIp, serverIp);
         return ips;
     }
 

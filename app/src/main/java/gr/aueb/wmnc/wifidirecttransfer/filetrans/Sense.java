@@ -16,24 +16,29 @@ public class Sense extends AsyncTask<Object, Void, Void> {
     protected Void doInBackground(Object... objects) {
         try{
             serverSocket = new ServerSocket(4201);
-            socket = serverSocket.accept();
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
             while(true){
+                socket = serverSocket.accept();
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                System.out.println("pass");
                 String temp = (String) in.readObject();
                 if(temp == null){
                     continue;
                 }
                 else if(temp.equals("SEND_FILE")){
-                    Receive receive = new Receive();
-                    receive.execute();
+                    System.out.println("here");
+                    try {
+                        Thread.sleep(1000);
+                        Receive receive = new Receive();
+                        receive.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 else if(temp.equals("EXIT")){
                     break;
                 }
+                in.close();
             }
-            out.close();
-            in.close();
             socket.close();
             serverSocket.close();
         }

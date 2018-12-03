@@ -72,7 +72,7 @@ public class ServiceFrag extends Fragment {
 
     @Override
     public void onResume() {
-        wiFiDirectReceiver.onResume();
+        wiFiDirectReceiver.onResumeService();
         super.onResume();
     }
 

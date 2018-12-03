@@ -29,6 +29,7 @@ public class Receive extends AsyncTask<Object, Void, Void> {
 
     @Override
     protected Void doInBackground(Object... params) {
+        System.out.println("Executed");
         storePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
         try {
             startServer(port);

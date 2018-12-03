@@ -34,7 +34,7 @@ public class IPRequester extends AsyncTask<String, Void, phonesIps> {
             out.writeObject(ip);
             out.flush();
             server = ip;
-            System.out.println("Host");
+            System.out.println("Guest");
             System.out.println("Server: " + server);
             System.out.println("Client: " + client);
             if(out != null || in != null || socket != null){

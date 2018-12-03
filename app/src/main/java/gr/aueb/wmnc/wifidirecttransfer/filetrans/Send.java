@@ -32,20 +32,18 @@ public class Send extends AsyncTask<Object, Void, Void> {
 
     @Override
     protected Void doInBackground(Object... params) {
-        System.out.println("321");
         try {
             ip = (String) params[1];
-            System.out.println(ip);
             Socket socket = new Socket(ip, 4201);
-            System.out.println(params[1]);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+            //ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
             out.writeObject("SEND_FILE");
             out.flush();
+            System.out.println("SENT");
             //Socket sendFile = new Socket((String) params[1], 4200);
 
-            //out.close();
-            //socket.close();
+            out.close();
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -59,6 +57,7 @@ public class Send extends AsyncTask<Object, Void, Void> {
         }catch (IOException ioException){
             ioException.printStackTrace();
         }
+
         return null;
     }
 
