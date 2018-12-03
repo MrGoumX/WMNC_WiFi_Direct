@@ -8,7 +8,7 @@ import java.io.IOException;
 public class SimpleChatServer extends AsyncTask<Void, Void, Void> {
 
     private ServerSocket ssocket;
-    private final int port = 5678;
+    private final int port = 4203;
     private ConnectionSet connections;
 
     @Override

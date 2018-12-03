@@ -32,10 +32,6 @@ public class UIService extends Service {
             @Override
             public void run() {
                 UIUpdater.updateUI(DrawerMain.menu, WiFiDirectReceiver.type);
-                /*if(WiFiDirectReceiver.connected){
-                    MenuInflater inflater = new MenuInflater(getApplicationContext());
-                    inflater.inflate(R.menu.drawer_main, DrawerMain.menu);
-                }*/
                 handler.postDelayed(this, delay);
             }
         }, delay);

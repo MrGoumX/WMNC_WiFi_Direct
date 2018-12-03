@@ -1,12 +1,14 @@
 package gr.aueb.wmnc.wifidirecttransfer.chat.client;
 
 import android.os.AsyncTask;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
 import java.io.ObjectInputStream;
 
+import gr.aueb.wmnc.wifidirecttransfer.R;
 import gr.aueb.wmnc.wifidirecttransfer.chat.MemberData;
 import gr.aueb.wmnc.wifidirecttransfer.chat.Message;
 import gr.aueb.wmnc.wifidirecttransfer.chat.MessageAdapter;
@@ -14,19 +16,11 @@ import gr.aueb.wmnc.wifidirecttransfer.chat.MessageAdapter;
 class ServerController extends AsyncTask<Void, Void, Void>
 {
     private ObjectInputStream in;
-    private ImageButton send;
-    private EditText chat;
-    private ListView messages;
-    private MemberData memberData;
     private MessageAdapter adapter;
 
-    public ServerController(ObjectInputStream in, ImageButton send, EditText chat, ListView messages, MemberData memberData, MessageAdapter adapter)
+    public ServerController(ObjectInputStream in, MessageAdapter adapter)
     {
         this.in = in;
-        this.send = send;
-        this.chat = chat;
-        this.messages = messages;
-        this.memberData = memberData;
         this.adapter = adapter;
     }
 
@@ -37,7 +31,7 @@ class ServerController extends AsyncTask<Void, Void, Void>
             Message data;
             while ((data = (Message) in.readObject()) != null)
             {
-                synchronized (messages.getAdapter())
+                synchronized (adapter)
                 {
                     adapter.add(data);
                 }

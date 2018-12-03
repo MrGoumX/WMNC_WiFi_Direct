@@ -3,6 +3,7 @@ package gr.aueb.wmnc.wifidirecttransfer.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -38,6 +39,8 @@ public class ChatFrag extends Fragment {
     private EditText chat;
     private ListView messages;
     private Menu menu;
+    private SimpleChatClient client;
+    private boolean initiated = false;
 
     @Nullable
     @Override
@@ -64,6 +67,18 @@ public class ChatFrag extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        if(WiFiDirectReceiver.connected){
+            if(receiver.isOwner()){
+                chatServer = new SimpleChatServer();
+                chatServer.execute();
+            }
+            client = new SimpleChatClient();
+        }
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         this.menu = menu;
@@ -71,24 +86,22 @@ public class ChatFrag extends Fragment {
     }
 
     private void action() {
-
-        if(WiFiDirectReceiver.connected){
-            if(receiver.isOwner()){
-                chatServer = new SimpleChatServer();
-                chatServer.execute();
-            }
-            SimpleChatClient client = new SimpleChatClient();
-
+        if(!initiated){
             AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
             builder.setTitle("What is your name?");
             final EditText input = new EditText(mActivity);
-            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
             builder.setView(input);
 
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     name = input.getText().toString();
+                    client.connectToIp(ips.getServerIp());
+                    client.setName(name);
+                    client.setView(getView());
+                    client.initiate();
+                    initiated = true;
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -99,9 +112,9 @@ public class ChatFrag extends Fragment {
                 }
             });
             builder.show();
-
-            client.execute(ips.getServerIp(), name, send, chat, messages, mActivity);
         }
+        mActivity.startService(new Intent(mActivity, SimpleChatClient.class));
+        //client.execute(ips.getServerIp(), name, getView(), mActivity);
     }
 
     @Override

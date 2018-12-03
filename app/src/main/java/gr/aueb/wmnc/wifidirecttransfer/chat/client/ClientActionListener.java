@@ -8,6 +8,7 @@ import android.widget.ListView;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
+import gr.aueb.wmnc.wifidirecttransfer.R;
 import gr.aueb.wmnc.wifidirecttransfer.chat.MemberData;
 import gr.aueb.wmnc.wifidirecttransfer.chat.Message;
 import gr.aueb.wmnc.wifidirecttransfer.chat.MessageAdapter;
@@ -17,17 +18,19 @@ public class ClientActionListener
     private ObjectOutputStream out;
     private ImageButton send;
     private EditText chat;
-    private ListView messages;
+    private View view;
+    //private ListView messages;
     private MemberData memberData;
     private MessageAdapter adapter;
     private Message message;
 
-    public ClientActionListener(ObjectOutputStream out, ImageButton send, EditText chat, ListView messages, MemberData memberData, MessageAdapter adapter)
+    public ClientActionListener(ObjectOutputStream out, View view, MemberData memberData, MessageAdapter adapter)
     {
         this.out = out;
-        this.send = send;
-        this.chat = chat;
-        this.messages = messages;
+        this.view = view;
+        this.send = (ImageButton) view.findViewById(R.id.sendf);
+        this.chat = (EditText) view.findViewById(R.id.chat_box);
+        //this.messages = (ListView) view.findViewById(R.id.chat_view);
         this.memberData = memberData;
         this.adapter = adapter;
         loop();
