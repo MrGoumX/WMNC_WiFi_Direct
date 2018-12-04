@@ -41,6 +41,7 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
     private FileTransFrag fileTransFrag;
     private UIService uiService;
     private WiFiDirectReceiver wiFiDirectReceiver;
+    private MenuItem wifi;
     public static Menu menu;
 
     private static final int ACCEPTED_PERMISSIONS = 0; // Necessary for Android wifi scanning & for writing files to external storage
@@ -105,6 +106,14 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.drawer_main, menu);
         this.menu = menu;
+        wifi = menu.findItem(R.id.wifi);
+
+        if(wifiManager.isWifiEnabled()){
+            wifi.setIcon(R.drawable.ic_wifi_white_24dp);
+        }
+        else{
+            wifi.setIcon(R.drawable.wifi);
+        }
         return true;
     }
 
@@ -120,11 +129,12 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
             if(wifiManager.isWifiEnabled()){
                 wifiManager.setWifiEnabled(false);
                 Toast.makeText(getApplicationContext(), "WiFi: Disabled", Toast.LENGTH_SHORT).show();
-                //UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
+                wifi.setIcon(R.drawable.wifi);
             }
             else{
                 wifiManager.setWifiEnabled(true);
                 Toast.makeText(getApplicationContext(), "WiFi: Enabled", Toast.LENGTH_SHORT).show();
+                wifi.setIcon(R.drawable.ic_wifi_white_24dp);
             }
         }
         else if(id == R.id.cancel){
