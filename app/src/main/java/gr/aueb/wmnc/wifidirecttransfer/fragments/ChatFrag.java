@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -92,8 +93,14 @@ public class ChatFrag extends Fragment {
                         SimpleChatServer.chatOnline = true;
                     }
                     else{
-                        SimpleChatClient simpleChatClient = new SimpleChatClient();
-                        simpleChatClient.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, mActivity, name, ips.getServerIp());
+                        if(SimpleChatServer.chatOnline){
+                            SimpleChatClient simpleChatClient = new SimpleChatClient();
+                            simpleChatClient.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, mActivity, name, ips.getServerIp());
+                        }
+                        else{
+                            Toast.makeText(mActivity.getApplication(), "Server not alive", Toast.LENGTH_SHORT).show();
+                            getFragmentManager().beginTransaction().replace(R.id.fragment, ((DrawerMain)getActivity()).getInfoFrag()).commit();
+                        }
                     }
                     initiated = true;
                 }
