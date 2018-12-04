@@ -140,6 +140,7 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         else if(id == R.id.cancel){
             try{
                 wiFiDirectReceiver.destroy();
+                unregisterReceiver(wiFiDirectReceiver);
                 finish();
                 startActivity(getIntent());
             }catch (Exception e){
