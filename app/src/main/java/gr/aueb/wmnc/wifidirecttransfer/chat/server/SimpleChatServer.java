@@ -77,6 +77,7 @@ public class SimpleChatServer extends AsyncTask<Object, Void, Void>{
 
                     while((d = (Message) in.readObject()) != null){
                         synchronized (adapter){
+                            d.setOur(false);
                             System.out.println(d.getMessage());
                             ReceiveMessage receiveMessage = new ReceiveMessage();
                             receiveMessage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, d);
