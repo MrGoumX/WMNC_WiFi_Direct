@@ -65,6 +65,7 @@ public class MessageAdapter extends BaseAdapter {
             messageView.messageBody.setText(message.getMessage());
             GradientDrawable drawable = (GradientDrawable) messageView.avatar.getBackground();
             drawable.setColor(Color.parseColor(message.getData().getColor()));
+            System.out.println("FROM OTHER PARTY");
         }
         System.out.println("Called");
         return convertView;

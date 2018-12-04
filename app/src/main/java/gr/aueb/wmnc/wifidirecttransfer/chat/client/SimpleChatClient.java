@@ -75,7 +75,7 @@ public class SimpleChatClient extends AsyncTask<Object, Void, Void>
                 synchronized (adapter){
                     System.out.println(d.getMessage());
                     ReceiveMessage receiveMessage = new ReceiveMessage();
-                    receiveMessage.execute(adapter, d);
+                    receiveMessage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, d);
                     /*Looper.prepare();
                     Handler handler = new Handler();
                     handler.post(new Runnable() {
