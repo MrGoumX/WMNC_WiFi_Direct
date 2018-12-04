@@ -3,6 +3,7 @@ package gr.aueb.wmnc.wifidirecttransfer.chat.client;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -72,6 +73,7 @@ public class SimpleChatClient extends AsyncTask<Object, Void, Void>
             while((d = (Message) in.readObject()) != null){
                 synchronized (adapter){
                     System.out.println(d.getMessage());
+                    Looper.prepare();
                     Handler handler = new Handler();
                     handler.post(new Runnable() {
                         @Override
