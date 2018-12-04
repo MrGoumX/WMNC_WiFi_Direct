@@ -25,8 +25,8 @@ public class MessageAdapter extends BaseAdapter {
     }
 
     public void add(Message message){
+        System.out.println("123");
         this.messages.add(message);
-        notifyDataSetChanged();
     }
 
     @Override
@@ -51,21 +51,24 @@ public class MessageAdapter extends BaseAdapter {
         Message message = messages.get(position);
         if(message.isOur()){
             convertView = messageInf.inflate(R.layout.message, null);
-            messageView.setMessageBody((TextView) convertView.findViewById(R.id.m_body));
+            messageView.messageBody = (TextView) convertView.findViewById(R.id.m_body);
             convertView.setTag(messageView);
-            messageView.getMessageBody().setText(message.getMessage());
+            messageView.messageBody.setText(message.getMessage());
         }
         else{
             convertView = messageInf.inflate(R.layout.message_o, null);
-            messageView.setAvatar((View) convertView.findViewById(R.id.avatar));
-            messageView.setName((TextView) convertView.findViewById(R.id.name));
-            messageView.setMessageBody((TextView) convertView.findViewById(R.id.m_body));
+            messageView.avatar = ((View) convertView.findViewById(R.id.avatar));
+            messageView.name = ((TextView) convertView.findViewById(R.id.name));
+            messageView.messageBody = ((TextView) convertView.findViewById(R.id.m_body));
             convertView.setTag(messageView);
-            messageView.getName().setText(message.getData().getName());
-            messageView.getMessageBody().setText(message.getMessage());
-            GradientDrawable drawable = (GradientDrawable) messageView.getAvatar().getBackground();
+            messageView.name.setText(message.getData().getName());
+            messageView.messageBody.setText(message.getMessage());
+            GradientDrawable drawable = (GradientDrawable) messageView.avatar.getBackground();
             drawable.setColor(Color.parseColor(message.getData().getColor()));
+            System.out.println("FROM OTHER PARTY");
         }
+        System.out.println("Called");
         return convertView;
     }
+
 }

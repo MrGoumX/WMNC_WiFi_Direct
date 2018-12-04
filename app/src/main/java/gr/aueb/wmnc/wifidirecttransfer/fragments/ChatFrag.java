@@ -16,8 +16,17 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Toast;
 
+import java.util.Random;
+
+import gr.aueb.wmnc.wifidirecttransfer.DrawerMain;
 import gr.aueb.wmnc.wifidirecttransfer.R;
+import gr.aueb.wmnc.wifidirecttransfer.chat.MemberData;
+import gr.aueb.wmnc.wifidirecttransfer.chat.Message;
+import gr.aueb.wmnc.wifidirecttransfer.chat.MessageAdapter;
+import gr.aueb.wmnc.wifidirecttransfer.chat.client.Color;
 import gr.aueb.wmnc.wifidirecttransfer.chat.client.SimpleChatClient;
 import gr.aueb.wmnc.wifidirecttransfer.chat.server.SimpleChatServer;
 import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
@@ -28,6 +37,8 @@ public class ChatFrag extends Fragment {
     private WiFiDirectReceiver receiver;
     private Activity mActivity;
     private SimpleChatServer chatServer;
+    private MessageAdapter adapter;
+    private ListView listView;
     private String name;
     private phonesIps ips;
     private Menu menu;
@@ -45,25 +56,17 @@ public class ChatFrag extends Fragment {
 
         receiver = WiFiDirectReceiver.getInstance();
 
-        if(WiFiDirectReceiver.connected){
+        if (WiFiDirectReceiver.connected) {
             ips = receiver.getPhoneIps();
         }
+
+        listView = (ListView) view.findViewById(R.id.chat_view);
+        adapter = new MessageAdapter(mActivity);
+        listView.setAdapter(adapter);
 
         action();
 
         return view;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        if(WiFiDirectReceiver.connected){
-            if(WiFiDirectReceiver.getInstance().isOwner()){
-                chatServer = new SimpleChatServer();
-                chatServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            }
-            client = new SimpleChatClient();
-        }
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -84,11 +87,24 @@ public class ChatFrag extends Fragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     name = input.getText().toString();
-                    client.connectToIp(ips.getServerIp());
-                    client.setName(name);
-                    client.setView(getView());
-                    //client.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    client.execute();
+                    if(WiFiDirectReceiver.isHost){
+                        SimpleChatServer simpleChatServer = new SimpleChatServer();
+                        simpleChatServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, mActivity, name);
+                    }
+                    else{
+                        /*if(SimpleChatServer.chatOnline){
+                            SimpleChatClient simpleChatClient = new SimpleChatClient();
+                            simpleChatClient.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, mActivity, name, ips.getServerIp());
+
+                        }
+                        else{
+                            Toast.makeText(mActivity.getApplication(), "Server not alive", Toast.LENGTH_SHORT).show();
+                            getFragmentManager().beginTransaction().replace(R.id.fragment, ((DrawerMain)getActivity()).getInfoFrag()).commit();
+                        }*/
+                        SimpleChatClient simpleChatClient = new SimpleChatClient();
+                        simpleChatClient.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, mActivity, name, ips.getServerIp());
+                    }
+
                     initiated = true;
                 }
             });
@@ -96,13 +112,10 @@ public class ChatFrag extends Fragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
-                    return;
+                    getFragmentManager().beginTransaction().replace(R.id.fragment, ((DrawerMain)getActivity()).getInfoFrag()).commit();
                 }
             });
             builder.show();
-        }
-        if(initiated){
-            mActivity.startService(new Intent(mActivity, SimpleChatClient.class));
         }
     }
 

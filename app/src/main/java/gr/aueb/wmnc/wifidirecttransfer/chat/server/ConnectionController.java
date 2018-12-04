@@ -8,20 +8,43 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Objects;
 
-class ConnectionController extends Thread
+import gr.aueb.wmnc.wifidirecttransfer.chat.Message;
+import gr.aueb.wmnc.wifidirecttransfer.chat.MessageAdapter;
+
+class ConnectionController extends AsyncTask<Void, Void, Void>
 {
     private String clientName;
     private Socket clientSocket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    private ConnectionSet connectionSet;
+    private MessageAdapter adapter;
 
 
-    public ConnectionController(Socket connectionSocket, ConnectionSet connections)
+    public ConnectionController(Socket connectionSocket, MessageAdapter adapter)
     {
-        clientSocket = connectionSocket;
-        connectionSet = connections;
+        this.clientSocket = connectionSocket;
+        this.adapter = adapter;
     }
+
+
+    @Override
+    protected Void doInBackground(Void... voids) {
+        try {
+            out = new ObjectOutputStream(clientSocket.getOutputStream());
+            in = new ObjectInputStream(clientSocket.getInputStream());
+            clientName = (String) in.readObject();
+            Message d;
+            while((d = (Message) in.readObject()) != null){
+                synchronized (adapter){
+                    adapter.add(d);
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     public void disconnect()
     {
@@ -68,43 +91,5 @@ class ConnectionController extends Thread
         return Objects.hash(clientName);
     }
 
-    public void run(){
-        boolean accepted = false;
-        try
-        {
-            out = new ObjectOutputStream(clientSocket.getOutputStream());
-            in = new ObjectInputStream(clientSocket.getInputStream());
 
-            clientName = (String) in.readObject();
-
-            accepted = connectionSet.add(this);
-            if (accepted)
-                System.out.println(clientName + " connected.\nNumber of total connections: " + connectionSet.size());
-            else
-                out.writeObject(new String("Name already exists!\nThe connection will now terminate."));
-
-            String data;
-
-            while (accepted && (data = (String) in.readObject()) != null)
-            {
-                if (data.trim().equals("/close"))
-                    break;
-                connectionSet.broadcast(clientName + ": " + data);
-            }
-
-
-        } catch (Exception e)
-        {
-            System.out.println(e);
-        } finally
-
-        {
-            if (accepted)
-            {
-                connectionSet.remove(this);
-
-            }
-            disconnect();
-        }
-    }
 }
