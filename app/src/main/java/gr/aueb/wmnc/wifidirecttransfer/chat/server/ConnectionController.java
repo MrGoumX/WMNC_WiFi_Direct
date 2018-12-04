@@ -8,7 +8,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Objects;
 
-class ConnectionController extends AsyncTask<Void, Void, Void>
+class ConnectionController extends Thread
 {
     private String clientName;
     private Socket clientSocket;
@@ -68,8 +68,7 @@ class ConnectionController extends AsyncTask<Void, Void, Void>
         return Objects.hash(clientName);
     }
 
-    @Override
-    protected Void doInBackground(Void... voids) {
+    public void run(){
         boolean accepted = false;
         try
         {
@@ -107,6 +106,5 @@ class ConnectionController extends AsyncTask<Void, Void, Void>
             }
             disconnect();
         }
-        return null;
     }
 }

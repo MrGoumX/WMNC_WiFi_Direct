@@ -16,6 +16,7 @@ import gr.aueb.wmnc.wifidirecttransfer.chat.MessageAdapter;
 public class ClientActionListener extends AsyncTask<Object, Void, Void>
 {
     private ObjectOutputStream out;
+    private Message message;
 
     public ClientActionListener(ObjectOutputStream out)
     {
@@ -25,7 +26,7 @@ public class ClientActionListener extends AsyncTask<Object, Void, Void>
     @Override
     protected Void doInBackground(Object... objects) {
         try {
-            out.writeObject((Message) objects[0]);
+            out.writeObject(objects[0]);
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -33,7 +34,16 @@ public class ClientActionListener extends AsyncTask<Object, Void, Void>
         return null;
     }
 
-    public void send(Message message){
-
+    /*public void run(){
+        try {
+            out.writeObject(message);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+    public void send(Message message){
+        this.message = message;
+    }*/
 }

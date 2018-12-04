@@ -23,7 +23,7 @@ import gr.aueb.wmnc.wifidirecttransfer.chat.MessageAdapter;
 
 public class SimpleChatClient extends AsyncTask<Void, Void, Void>
 {
-    private Socket csocket;
+    private static Socket csocket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private ClientActionListener listener;
@@ -42,6 +42,7 @@ public class SimpleChatClient extends AsyncTask<Void, Void, Void>
             in = new ObjectInputStream(csocket.getInputStream());
             out.writeObject(name);
             out.flush();
+            System.out.println("here");
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -50,8 +51,10 @@ public class SimpleChatClient extends AsyncTask<Void, Void, Void>
         final MessageAdapter adapter = new MessageAdapter(view.getContext());
         final MemberData memberData = new MemberData(name, generateColor(new Random()));
 
-        ServerController inputHandler = new ServerController(csocket, adapter);
-        inputHandler.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        final ServerController inputHandler = new ServerController(in, adapter);
+        inputHandler.start();
+        //inputHandler.execute();
+        //listener = new ClientActionListener(out);
         send = (ImageButton) view.findViewById(R.id.send);
         chat = (EditText) view.findViewById(R.id.chat_box);
         send.setOnClickListener(new View.OnClickListener() {
@@ -60,12 +63,25 @@ public class SimpleChatClient extends AsyncTask<Void, Void, Void>
                 String temp = chat.getText().toString();
                 final Message message = new Message(temp, memberData, false);
                 listener = new ClientActionListener(out);
-                listener.execute(message);
+                listener.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, message);
+                //listener.execute(message);
+                //listener.send(message);
+                /*listener.start();
+                try {
+                    listener.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }*/
                 chat.getText().clear();
                 message.setOur(true);
                 adapter.add(message);
             }
         });
+        try {
+            inputHandler.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
