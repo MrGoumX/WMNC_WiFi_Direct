@@ -364,9 +364,6 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                     Toast.makeText(mActivity.getApplicationContext(), "Disconnect Failed", Toast.LENGTH_SHORT).show();
                 }
             });
-            if(hasService){
-                destroyService();
-            }
         }
     }
 
@@ -434,6 +431,15 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
             return isOwner;
         }
         return Boolean.parseBoolean(null);
+    }
+
+    public void destroy(){
+        if(connected){
+            disconnect();
+        }
+        if(hasService){
+            destroyService();
+        }
     }
 
     public void setMenu(Menu menu){

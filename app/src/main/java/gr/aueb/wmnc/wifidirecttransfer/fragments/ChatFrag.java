@@ -18,9 +18,14 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import java.util.Random;
+
+import gr.aueb.wmnc.wifidirecttransfer.DrawerMain;
 import gr.aueb.wmnc.wifidirecttransfer.R;
+import gr.aueb.wmnc.wifidirecttransfer.chat.MemberData;
 import gr.aueb.wmnc.wifidirecttransfer.chat.Message;
 import gr.aueb.wmnc.wifidirecttransfer.chat.MessageAdapter;
+import gr.aueb.wmnc.wifidirecttransfer.chat.client.Color;
 import gr.aueb.wmnc.wifidirecttransfer.chat.client.SimpleChatClient;
 import gr.aueb.wmnc.wifidirecttransfer.chat.server.SimpleChatServer;
 import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
@@ -38,7 +43,6 @@ public class ChatFrag extends Fragment {
     private Menu menu;
     private SimpleChatClient client;
     private boolean initiated = false;
-    private ChatFrag thisClass;
 
     @Nullable
     @Override
@@ -49,8 +53,6 @@ public class ChatFrag extends Fragment {
 
         mActivity = getActivity();
 
-        thisClass = this;
-
         receiver = WiFiDirectReceiver.getInstance();
 
         if (WiFiDirectReceiver.connected) {
@@ -58,7 +60,7 @@ public class ChatFrag extends Fragment {
         }
 
         listView = (ListView) view.findViewById(R.id.chat_view);
-        adapter = new MessageAdapter(getContext());
+        adapter = new MessageAdapter(mActivity);
         listView.setAdapter(adapter);
 
         action();
@@ -86,13 +88,11 @@ public class ChatFrag extends Fragment {
                     name = input.getText().toString();
                     if(WiFiDirectReceiver.isHost){
                         SimpleChatServer simpleChatServer = new SimpleChatServer();
-                        simpleChatServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getView(), name, adapter, mActivity);
+                        simpleChatServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, mActivity, name);
                     }
                     else{
                         SimpleChatClient simpleChatClient = new SimpleChatClient();
-                        simpleChatClient.connectToIp(ips.getServerIp());
-                        simpleChatClient.setView(getView());
-                        simpleChatClient.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, name, adapter, mActivity);
+                        simpleChatClient.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, mActivity, name, ips.getServerIp());
                     }
                     initiated = true;
                 }
@@ -101,7 +101,7 @@ public class ChatFrag extends Fragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
-                    return;
+                    getFragmentManager().beginTransaction().replace(R.id.fragment, ((DrawerMain)getActivity()).getInfoFrag()).commit();
                 }
             });
             builder.show();

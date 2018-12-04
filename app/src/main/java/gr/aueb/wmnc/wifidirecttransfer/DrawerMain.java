@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import gr.aueb.wmnc.wifidirecttransfer.chat.server.SimpleChatServer;
 import gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps;
 import gr.aueb.wmnc.wifidirecttransfer.fragments.ChatFrag;
 import gr.aueb.wmnc.wifidirecttransfer.fragments.FileTransFrag;
@@ -127,10 +128,12 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
             }
         }
         else if(id == R.id.cancel){
-            if(WiFiDirectReceiver.connected){
-                settingsFrag.cancelConnection();
-                chatFrag = new ChatFrag();
-                fileTransFrag = new FileTransFrag();
+            try{
+                wiFiDirectReceiver.destroy();
+                finish();
+                startActivity(getIntent());
+            }catch (Exception e){
+                Toast.makeText(getApplicationContext(), "Error: Refresh failed." + e, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -152,7 +155,7 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
                 Toast.makeText(getApplicationContext(), "Not connected yet", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.nav_chat) {
-            if(WiFiDirectReceiver.connected){
+            if(WiFiDirectReceiver.connected && SimpleChatServer.chatOnline){
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment, chatFrag).commit();
             }
             else{
@@ -188,6 +191,10 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
 
     public WiFiDirectReceiver getWiFiDirectReceiver() {
         return wiFiDirectReceiver;
+    }
+
+    public InfoFrag getInfoFrag() {
+        return infoFrag;
     }
 
     public void setPhonesIps(phonesIps phonesIps){

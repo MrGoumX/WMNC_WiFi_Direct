@@ -5,9 +5,9 @@ import android.widget.TextView;
 
 public class MessageView {
 
-    private View avatar;
-    private TextView name;
-    private TextView messageBody;
+    public View avatar;
+    public TextView name;
+    public TextView messageBody;
 
     public MessageView() {
 
