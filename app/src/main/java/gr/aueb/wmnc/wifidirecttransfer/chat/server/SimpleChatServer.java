@@ -19,8 +19,10 @@ import gr.aueb.wmnc.wifidirecttransfer.R;
 import gr.aueb.wmnc.wifidirecttransfer.chat.MemberData;
 import gr.aueb.wmnc.wifidirecttransfer.chat.Message;
 import gr.aueb.wmnc.wifidirecttransfer.chat.MessageAdapter;
+import gr.aueb.wmnc.wifidirecttransfer.chat.ReceiveMessage;
 import gr.aueb.wmnc.wifidirecttransfer.chat.client.Color;
 import gr.aueb.wmnc.wifidirecttransfer.chat.SendMessage;
+import gr.aueb.wmnc.wifidirecttransfer.filetrans.Receive;
 
 public class SimpleChatServer extends AsyncTask<Object, Void, Void>{
 
@@ -76,7 +78,9 @@ public class SimpleChatServer extends AsyncTask<Object, Void, Void>{
                     while((d = (Message) in.readObject()) != null){
                         synchronized (adapter){
                             System.out.println(d.getMessage());
-                            Looper.prepare();
+                            ReceiveMessage receiveMessage = new ReceiveMessage();
+                            receiveMessage.execute(adapter, d);
+                            /*Looper.prepare();
                             Handler handler = new Handler();
                             handler.post(new Runnable() {
                                 @Override
@@ -89,7 +93,7 @@ public class SimpleChatServer extends AsyncTask<Object, Void, Void>{
                                         }
                                     });
                                 }
-                            });
+                            });*/
 
                         }
                     }
