@@ -89,6 +89,7 @@ public class ChatFrag extends Fragment {
                     if(WiFiDirectReceiver.isHost){
                         SimpleChatServer simpleChatServer = new SimpleChatServer();
                         simpleChatServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, mActivity, name);
+                        SimpleChatServer.chatOnline = true;
                     }
                     else{
                         SimpleChatClient simpleChatClient = new SimpleChatClient();

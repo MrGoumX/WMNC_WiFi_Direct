@@ -36,7 +36,7 @@ public class SimpleChatServer extends AsyncTask<Object, Void, Void>{
 
     @Override
     protected Void doInBackground(Object... objects) {
-        chatOnline = true;
+
         adapter = (MessageAdapter) objects[0];
         mActivity = (Activity) objects[1];
         name = (String) objects[2];
