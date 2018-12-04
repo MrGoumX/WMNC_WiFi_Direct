@@ -90,20 +90,22 @@ public class ChatFrag extends Fragment {
                     if(WiFiDirectReceiver.isHost){
                         SimpleChatServer simpleChatServer = new SimpleChatServer();
                         simpleChatServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, mActivity, name);
-                        SimpleChatServer.chatOnline = true;
-                        initiated = true;
                     }
                     else{
-                        if(SimpleChatServer.chatOnline){
+                        /*if(SimpleChatServer.chatOnline){
                             SimpleChatClient simpleChatClient = new SimpleChatClient();
                             simpleChatClient.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, mActivity, name, ips.getServerIp());
-                            initiated = true;
+
                         }
                         else{
                             Toast.makeText(mActivity.getApplication(), "Server not alive", Toast.LENGTH_SHORT).show();
                             getFragmentManager().beginTransaction().replace(R.id.fragment, ((DrawerMain)getActivity()).getInfoFrag()).commit();
-                        }
+                        }*/
+                        SimpleChatClient simpleChatClient = new SimpleChatClient();
+                        simpleChatClient.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, mActivity, name, ips.getServerIp());
                     }
+
+                    initiated = true;
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

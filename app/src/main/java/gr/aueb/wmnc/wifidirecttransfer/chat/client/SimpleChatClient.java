@@ -42,7 +42,11 @@ public class SimpleChatClient extends AsyncTask<Object, Void, Void>
         final EditText chat = (EditText) view.findViewById(R.id.chat_box);
         final MemberData memberData = new MemberData(name, Color.generateColor(new Random()));
         try {
-            csocket = new Socket(ip, 4203);
+            while(true){
+                csocket = new Socket(ip, 4203);
+                if(csocket.isConnected()) break;
+            }
+            //csocket = new Socket(ip, 4203);
             out = new ObjectOutputStream(csocket.getOutputStream());
             in = new ObjectInputStream(csocket.getInputStream());
             send.setOnClickListener(new View.OnClickListener() {
