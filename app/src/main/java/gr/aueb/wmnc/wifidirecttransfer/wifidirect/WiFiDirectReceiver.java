@@ -186,7 +186,6 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                     k++;
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(mActivity.getApplicationContext(), R.layout.simple_list_item_1, deviceNames);
-                listView.setAdapter(adapter);
             }
             if(peers.size() == 0){
                 Toast.makeText(mActivity.getApplicationContext(), "No devices found", Toast.LENGTH_SHORT).show();

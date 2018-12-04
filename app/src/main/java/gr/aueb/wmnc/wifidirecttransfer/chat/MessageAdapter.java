@@ -25,6 +25,7 @@ public class MessageAdapter extends BaseAdapter {
     }
 
     public void add(Message message){
+        System.out.println("123");
         this.messages.add(message);
         notifyDataSetChanged();
     }
@@ -66,6 +67,8 @@ public class MessageAdapter extends BaseAdapter {
             GradientDrawable drawable = (GradientDrawable) messageView.getAvatar().getBackground();
             drawable.setColor(Color.parseColor(message.getData().getColor()));
         }
+        System.out.println("Called");
         return convertView;
     }
+
 }
