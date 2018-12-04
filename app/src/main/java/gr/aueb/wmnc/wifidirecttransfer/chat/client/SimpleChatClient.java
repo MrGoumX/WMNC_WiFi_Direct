@@ -56,7 +56,7 @@ public class SimpleChatClient extends AsyncTask<Object, Void, Void>
                     String temp = chat.getText().toString();
                     final Message message = new Message(temp, memberData, false);
                     SendMessage sM = new SendMessage();
-                    sM.execute(out, message);
+                    sM.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, out, message);
                     synchronized (adapter){
                         message.setOur(true);
                         mActivity.runOnUiThread(new Runnable() {
