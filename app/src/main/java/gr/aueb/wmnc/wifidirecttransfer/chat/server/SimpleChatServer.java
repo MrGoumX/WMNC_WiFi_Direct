@@ -80,21 +80,6 @@ public class SimpleChatServer extends AsyncTask<Object, Void, Void>{
                             System.out.println(d.getMessage());
                             ReceiveMessage receiveMessage = new ReceiveMessage();
                             receiveMessage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, d);
-                            /*Looper.prepare();
-                            Handler handler = new Handler();
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mActivity.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            adapter.add(d);
-                                            adapter.notifyDataSetChanged();
-                                        }
-                                    });
-                                }
-                            });*/
-
                         }
                     }
                 }

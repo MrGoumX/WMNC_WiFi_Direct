@@ -48,7 +48,6 @@ public class SimpleChatClient extends AsyncTask<Object, Void, Void>
                 csocket = new Socket(ip, 4203);
                 if(csocket.isConnected()) break;
             }
-            //csocket = new Socket(ip, 4203);
             out = new ObjectOutputStream(csocket.getOutputStream());
             in = new ObjectInputStream(csocket.getInputStream());
             send.setOnClickListener(new View.OnClickListener() {
@@ -76,20 +75,6 @@ public class SimpleChatClient extends AsyncTask<Object, Void, Void>
                     System.out.println(d.getMessage());
                     ReceiveMessage receiveMessage = new ReceiveMessage();
                     receiveMessage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, d);
-                    /*Looper.prepare();
-                    Handler handler = new Handler();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mActivity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    adapter.add(d);
-                                    adapter.notifyDataSetChanged();
-                                }
-                            });
-                        }
-                    });*/
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
