@@ -22,38 +22,30 @@ public class IPRequester extends AsyncTask<String, Void, phonesIps> {
 
     @Override
     protected phonesIps doInBackground(String... strings) {
-
         if (strings.length == 0)
             return null;
         try{
             // create the socket and initialize the streams
-            socket = new Socket(strings[0].substring(1), 4200);
+            String ip = strings[0].substring(1);
+            socket = new Socket(ip, 4200);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
-            server = socket.getInetAddress().toString().substring(1);
-            // send the GroupOwner ip to initialize the protocol
-            out.writeObject(strings[0].substring(1));
-            out.flush();
-            // receive our ip address
             client = (String)in.readObject();
-            client = client.substring(1);
+            out.writeObject(ip);
+            out.flush();
+            server = ip;
+            System.out.println("Guest");
+            System.out.println("Server: " + server);
+            System.out.println("Client: " + client);
+            if(out != null || in != null || socket != null){
+                out.close();
+                in.close();
+                socket.close();
+            }
         }
         catch (IOException|ClassNotFoundException e){
             e.printStackTrace();
-        }finally
-        {
-            try{
-                if(out != null && in != null &&socket != null) {
-                    out.close();
-                    in.close();
-                    socket.close();
-                }
-            }
-            catch (IOException e){
-                e.printStackTrace();
-            }
         }
-
         ips = new phonesIps(server, client);
         return ips;
     }

@@ -3,10 +3,8 @@ package gr.aueb.wmnc.wifidirecttransfer.filetrans;
 import android.os.AsyncTask;
 import android.os.Environment;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -23,15 +21,10 @@ public class Receive extends AsyncTask<Object, Void, Void> {
     private BufferedOutputStream bos;
     private FileOutputStream fos;
     private String storePath;
-    private int port = 4200;
+    private int port = 4300;
 
     @Override
     protected Void doInBackground(Object... params) {
-        try {
-            startServer(port);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         storePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
         try {
             startServer(port);
@@ -71,7 +64,6 @@ public class Receive extends AsyncTask<Object, Void, Void> {
     }
 
     private void readData() throws IOException{
-
         int current;
         byte buffer[] = new byte[size];
         Socket sock = server.accept();

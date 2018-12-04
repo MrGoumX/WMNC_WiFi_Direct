@@ -2,6 +2,7 @@ package gr.aueb.wmnc.wifidirecttransfer;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -24,41 +25,38 @@ import gr.aueb.wmnc.wifidirecttransfer.fragments.InfoFrag;
 import gr.aueb.wmnc.wifidirecttransfer.fragments.PersonFrag;
 import gr.aueb.wmnc.wifidirecttransfer.fragments.ServiceFrag;
 import gr.aueb.wmnc.wifidirecttransfer.fragments.SettingsFrag;
+import gr.aueb.wmnc.wifidirecttransfer.ui.UIService;
 import gr.aueb.wmnc.wifidirecttransfer.ui.UIUpdater;
 import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
 
 public class DrawerMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private WifiManager wifiManager;
-    private String type;
     private gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps phonesIps;
     private InfoFrag infoFrag;
     private SettingsFrag settingsFrag;
     private ServiceFrag serviceFrag;
     private ChatFrag chatFrag;
     private FileTransFrag fileTransFrag;
+    private UIService uiService;
     private WiFiDirectReceiver wiFiDirectReceiver;
-    protected Menu menu;
-    private static final int PERMISSION_ACCESS_COARSE_LOCATION = 0; // It is necessary for device scanning
-                                                                    // after Android version 7 and on
-    private static final int PERMSSION_WRITE_EXTERNAL_STORAGE = 0;
+    public static Menu menu;
+
+    private static final int ACCEPTED_PERMISSIONS = 0; // Necessary for Android wifi scanning & for writing files to external storage
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer_main);
 
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        PERMISSION_ACCESS_COARSE_LOCATION);
-            }
-        }
+        String[] perms = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        PERMSSION_WRITE_EXTERNAL_STORAGE);
+                requestPermissions(perms,
+                        ACCEPTED_PERMISSIONS);
             }
         }
 
@@ -83,11 +81,12 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         serviceFrag = new ServiceFrag();
         chatFrag = new ChatFrag();
         fileTransFrag = new FileTransFrag();
+        uiService = new UIService();
 
         wiFiDirectReceiver = WiFiDirectReceiver.getInstance();
         wiFiDirectReceiver.initialize(this);
 
-
+        startService(new Intent(this, UIService.class));
     }
 
     @Override
@@ -120,7 +119,7 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
             if(wifiManager.isWifiEnabled()){
                 wifiManager.setWifiEnabled(false);
                 Toast.makeText(getApplicationContext(), "WiFi: Disabled", Toast.LENGTH_SHORT).show();
-                UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
+                //UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
             }
             else{
                 wifiManager.setWifiEnabled(true);
@@ -130,6 +129,8 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
         else if(id == R.id.cancel){
             if(WiFiDirectReceiver.connected){
                 settingsFrag.cancelConnection();
+                chatFrag = new ChatFrag();
+                fileTransFrag = new FileTransFrag();
             }
         }
 
@@ -180,7 +181,6 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
             personFrag.setArguments(person);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment, personFrag).commit();
         }
-        UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

@@ -1,20 +1,16 @@
 package gr.aueb.wmnc.wifidirecttransfer.fragments;
 
 import android.os.Bundle;
-import android.provider.Contacts;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.style.UpdateAppearance;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import gr.aueb.wmnc.wifidirecttransfer.R;
-import gr.aueb.wmnc.wifidirecttransfer.ui.UIUpdater;
 import gr.aueb.wmnc.wifidirecttransfer.wifidirect.WiFiDirectReceiver;
 
 public class InfoFrag extends Fragment {
@@ -29,21 +25,19 @@ public class InfoFrag extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        UIUpdater.updateUI(menu, WiFiDirectReceiver.type);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+    @Override
+    public void onResume() {
+        WiFiDirectReceiver.getInstance().onResumeFragments();
+        super.onResume();
+    }
 
-        if(WiFiDirectReceiver.connected){
-            if(id == R.id.cancel){
-                ((DrawerMain)getActivity()).getSettingsFrag().cancelConnection();
-                removeItemFromUI();
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
+    @Override
+    public void onPause() {
+        WiFiDirectReceiver.getInstance().onPause();
+        super.onPause();
+    }
 
 }

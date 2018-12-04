@@ -1,6 +1,5 @@
 package gr.aueb.wmnc.wifidirecttransfer.filetrans;
 
-import android.net.Uri;
 import android.os.AsyncTask;
 
 import java.io.BufferedInputStream;
@@ -21,12 +20,13 @@ public class Send extends AsyncTask<Object, Void, Void> {
     private BufferedInputStream bfis;
     private File file;
     private String ip;
-    private int port = 4200;
+    private int port = 4300;
 
     @Override
     protected Void doInBackground(Object... params) {
         try {
-            Socket socket = new Socket((String) params[1], 4201);
+            ip = (String) params[1];
+            Socket socket = new Socket(ip, 4201);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             out.writeObject("SEND_FILE");
             out.flush();
@@ -36,14 +36,16 @@ public class Send extends AsyncTask<Object, Void, Void> {
             e.printStackTrace();
         }
 
-        Uri temp = (Uri) params[0];
-        this.file = new File(temp.toString());
+        String path = (String) params[0];
+        System.out.println(path);
+        this.file = new File(path);
         this.ip = (String) params[1];
         try{
             openFile(file);
         }catch (IOException ioException){
             ioException.printStackTrace();
         }
+
         return null;
     }
 
@@ -89,7 +91,21 @@ public class Send extends AsyncTask<Object, Void, Void> {
 
     private void sendString(String str) throws IOException{
 
-        Socket sock = new Socket(ip, port);
+        Socket sock = null;
+        while(true){
+            try {
+                sock = new Socket(ip, port);
+                if(sock != null) break;
+            }
+            catch (IOException e){
+                try{
+                    Thread.sleep(1000);
+                }
+                catch (Exception e1){
+                    e1.printStackTrace();
+                }
+            }
+        }
         OutputStream os = sock.getOutputStream();
         Writer sendName = new PrintWriter(os);
         sendName.write(str);
@@ -98,4 +114,5 @@ public class Send extends AsyncTask<Object, Void, Void> {
         if (os != null) os.close();
         if (sock != null) sock.close();
     }
+
 }

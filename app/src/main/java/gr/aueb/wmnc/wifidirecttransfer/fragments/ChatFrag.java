@@ -3,19 +3,19 @@ package gr.aueb.wmnc.wifidirecttransfer.fragments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ListView;
 
 import gr.aueb.wmnc.wifidirecttransfer.R;
 import gr.aueb.wmnc.wifidirecttransfer.chat.client.SimpleChatClient;
@@ -30,9 +30,9 @@ public class ChatFrag extends Fragment {
     private SimpleChatServer chatServer;
     private String name;
     private phonesIps ips;
-    private ImageButton send;
-    private EditText chat;
-    private ListView messages;
+    private Menu menu;
+    private SimpleChatClient client;
+    private boolean initiated = false;
 
     @Nullable
     @Override
@@ -42,10 +42,6 @@ public class ChatFrag extends Fragment {
         setHasOptionsMenu(true);
 
         mActivity = getActivity();
-
-        send = (ImageButton) view.findViewById(R.id.send);
-        chat = (EditText) view.findViewById(R.id.chat_box);
-        messages = (ListView) view.findViewById(R.id.chat_view);
 
         receiver = WiFiDirectReceiver.getInstance();
 
@@ -58,25 +54,42 @@ public class ChatFrag extends Fragment {
         return view;
     }
 
-    private void action() {
-
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         if(WiFiDirectReceiver.connected){
-            if(receiver.isOwner()){
+            if(WiFiDirectReceiver.getInstance().isOwner()){
                 chatServer = new SimpleChatServer();
-                chatServer.execute();
+                chatServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
-            SimpleChatClient client = new SimpleChatClient();
+            client = new SimpleChatClient();
+        }
+        super.onCreate(savedInstanceState);
+    }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        this.menu = menu;
+    }
+
+    private void action() {
+        if(!initiated){
             AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
             builder.setTitle("What is your name?");
             final EditText input = new EditText(mActivity);
-            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
             builder.setView(input);
 
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     name = input.getText().toString();
+                    client.connectToIp(ips.getServerIp());
+                    client.setName(name);
+                    client.setView(getView());
+                    //client.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    client.execute();
+                    initiated = true;
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -87,9 +100,21 @@ public class ChatFrag extends Fragment {
                 }
             });
             builder.show();
-
-            client.execute(ips.getServerIp(), name, send, chat, messages, mActivity);
         }
+        if(initiated){
+            mActivity.startService(new Intent(mActivity, SimpleChatClient.class));
+        }
+    }
 
+    @Override
+    public void onResume() {
+        WiFiDirectReceiver.getInstance().onResumeFragments();
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        WiFiDirectReceiver.getInstance().onPause();
+        super.onPause();
     }
 }

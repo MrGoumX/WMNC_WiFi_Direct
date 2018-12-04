@@ -5,6 +5,8 @@
     <uses-permission
         android:name="android.permission.ACCESS_COARSE_LOCATION"
         android:required="true" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:required="true" />
     <uses-permission
         android:name="android.permission.ACCESS_WIFI_STATE"
         android:required="true" />
@@ -20,7 +22,8 @@
     <uses-permission
         android:name="android.permission.INTERNET"
         android:required="true" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:required="true" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -40,10 +43,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--<activity
-            android:name=".DrawerMain"
-            android:label="@string/title_activity_drawer_main"
-            android:theme="@style/AppTheme.NoActionBar"></activity>-->
+        <service android:name=".ui.UIService"
+            android:enabled="true"/>
     </application>
 
 </manifest>

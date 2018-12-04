@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
@@ -28,7 +29,6 @@ import java.util.Map;
 
 import gr.aueb.wmnc.wifidirecttransfer.DrawerMain;
 import gr.aueb.wmnc.wifidirecttransfer.R;
-import gr.aueb.wmnc.wifidirecttransfer.ui.UIUpdater;
 import gr.aueb.wmnc.wifidirecttransfer.logic.IPGiver;
 import gr.aueb.wmnc.wifidirecttransfer.logic.IPRequester;
 import gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps;
@@ -38,7 +38,7 @@ import static android.os.Looper.getMainLooper;
 
 public class WiFiDirectReceiver extends BroadcastReceiver implements postConnectionIps{
 
-    private IntentFilter intentFilter;
+    private IntentFilter intentFilter, intentFilter2, intentFilter3;
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
     private WifiManager wifiManager;
@@ -58,10 +58,13 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
     private ListView listView, listView2;
     private boolean isOwner = false;
     private static boolean isInitialized = false;
+    private InetAddress owner;
+    private WifiP2pDnsSdServiceInfo serviceInfo;
 
     private static WiFiDirectReceiver instance = null;
     public static boolean connected = false;
     public static boolean hasService = false;
+    public static boolean isHost = false;
     public static String type = "";
 
     public static WiFiDirectReceiver getInstance()
@@ -85,6 +88,16 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
             intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
             intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
             intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+            intentFilter2 = new IntentFilter();
+            intentFilter2.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+            intentFilter2.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+            intentFilter2.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+            intentFilter3 = new IntentFilter();
+            intentFilter3.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+            intentFilter3.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
             mManager = (WifiP2pManager) mActivity.getSystemService(Context.WIFI_P2P_SERVICE);
             mChannel = mManager.initialize(mActivity, getMainLooper(), null);
             wifiManager = (WifiManager) mActivity.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -110,18 +123,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         else if(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)){
             if(mManager != null){
                 mManager.requestPeers(mChannel, peerListListener);
-                WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
-                mManager.addServiceRequest(mChannel, serviceRequest, new WifiP2pManager.ActionListener() {
-                    @Override
-                    public void onSuccess() {
 
-                    }
-
-                    @Override
-                    public void onFailure(int i) {
-
-                    }
-                });
             }
         }
         else if(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)){
@@ -135,7 +137,6 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
             else{
                 connected = false;
                 type = "";
-                UIUpdater.updateUI(menu, type);
             }
         }
         else if(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)){
@@ -147,23 +148,25 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         @SuppressLint("RestrictedApi")
         @Override
         public void onConnectionInfoAvailable(WifiP2pInfo info) {
-        final InetAddress owner = info.groupOwnerAddress;
+        owner = info.groupOwnerAddress;
         isOwner = info.isGroupOwner;
         if(!connected){
-            if(info.groupFormed && info.isGroupOwner) {
+            if(info.isGroupOwner) {
                 type = "Host";
-                IPGiver server = new IPGiver();
-                server.bind = thisClass;
-                server.execute();
+                isHost = true;
+                if(!hasService){
+                    IPGiver listenServer = new IPGiver();
+                    listenServer.bind = thisClass;
+                    listenServer.execute();
+                }
             }
             else {
                 type = "Guest";
-                IPRequester client = new IPRequester();
-                client.bind = thisClass;
-                client.execute(owner.toString());
+                IPRequester requester = new IPRequester();
+                requester.bind = thisClass;
+                requester.execute(info.groupOwnerAddress.toString());
             }
             connected = true;
-            UIUpdater.updateUI(menu, type);
         }
         }
     };
@@ -229,7 +232,17 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         record.put("listenport", "4200");
         record.put("name", "WMNC " + currentName);
         record.put("available", "visible");
-        WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("WMNC" + currentName, "_presence._tcp", record);
+        mManager.createGroup(mChannel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+            }
+
+            @Override
+            public void onFailure(int reason) {
+
+            }
+        });
+        serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("WMNC" + currentName, "_presence._tcp", record);
         mManager.addLocalService(mChannel, serviceInfo, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -241,11 +254,25 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 Toast.makeText(mActivity.getApplicationContext(), "Service Creation Failed", Toast.LENGTH_SHORT).show();
             }
         });
+        IPGiver listenSever = new IPGiver();
+        listenSever.bind = this;
+        listenSever.execute();
         hasService = true;
     }
 
     public void destroyService(){
         mManager.clearLocalServices(mChannel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(int i) {
+
+            }
+        });
+        mManager.removeLocalService(mChannel, serviceInfo, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(mActivity.getApplicationContext(), "Service Destroyed", Toast.LENGTH_SHORT).show();
@@ -257,10 +284,19 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
             }
         });
         hasService = false;
+        connected = false;
     }
 
     public void onResume(){
         mActivity.registerReceiver(this, intentFilter);
+    }
+
+    public void onResumeService(){
+        mActivity.registerReceiver(this, intentFilter2);
+    }
+
+    public void onResumeFragments(){
+        mActivity.registerReceiver(this, intentFilter3);
     }
 
     public void onPause(){
@@ -285,6 +321,18 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                 Toast.makeText(mActivity.getApplicationContext(), "Discovery Failed", Toast.LENGTH_SHORT).show();
             }
         });
+        WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
+        mManager.addServiceRequest(mChannel, serviceRequest, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(int i) {
+
+            }
+        });
         mManager.setDnsSdResponseListeners(mChannel, serviceResponseListener, txtRecordListener);
         mManager.discoverServices(mChannel, new WifiP2pManager.ActionListener() {
             @Override
@@ -302,14 +350,13 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
     }
 
     public void disconnect(){
-        if(connected){
+        if(connected && isInitialized){
             mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(mActivity.getApplicationContext(), "Disconnect Successful", Toast.LENGTH_SHORT).show();
                     connected = false;
                     type = "";
-                    UIUpdater.updateUI(menu, type);
                     ((DrawerMain)mActivity).setPhonesIps(null);
                 }
 
@@ -318,13 +365,18 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
                     Toast.makeText(mActivity.getApplicationContext(), "Disconnect Failed", Toast.LENGTH_SHORT).show();
                 }
             });
+            if(hasService){
+                destroyService();
+            }
         }
     }
 
     public void select(int pos){
         final WifiP2pDevice device = devices[pos];
-        WifiP2pConfig config = new WifiP2pConfig();
+        final WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = device.deviceAddress;
+        config.wps.setup = WpsInfo.PBC;
+        config.groupOwnerIntent = 15;
         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -343,10 +395,13 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         final String serviceName = serviceDeviceNames[pos];
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = device.deviceAddress;
+        config.wps.setup = WpsInfo.PBC;
+        config.groupOwnerIntent = 15;
         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
                 Toast.makeText(mActivity.getApplicationContext(), "Connected to Service " + serviceName, Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
@@ -385,4 +440,5 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
     public void setMenu(Menu menu){
         this.menu = menu;
     }
+
 }

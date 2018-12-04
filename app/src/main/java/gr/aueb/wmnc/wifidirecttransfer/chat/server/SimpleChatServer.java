@@ -8,7 +8,7 @@ import java.io.IOException;
 public class SimpleChatServer extends AsyncTask<Void, Void, Void> {
 
     private ServerSocket ssocket;
-    private final int port = 5678;
+    private final int port = 4203;
     private ConnectionSet connections;
 
     @Override
@@ -21,7 +21,8 @@ public class SimpleChatServer extends AsyncTask<Void, Void, Void> {
             System.out.println("server started.\nWaiting for connections...");
             while (true) {
                 ConnectionController temp = new ConnectionController(ssocket.accept(), connections);
-                temp.execute();
+                temp.start();
+                //temp.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         }
         catch (IOException ioe) {
