@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -56,9 +57,9 @@ public class ChatFrag extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         if(WiFiDirectReceiver.connected){
-            if(receiver.isOwner()){
+            if(WiFiDirectReceiver.getInstance().isOwner()){
                 chatServer = new SimpleChatServer();
-                chatServer.execute();
+                chatServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
             client = new SimpleChatClient();
         }
@@ -86,7 +87,8 @@ public class ChatFrag extends Fragment {
                     client.connectToIp(ips.getServerIp());
                     client.setName(name);
                     client.setView(getView());
-                    client.initiate();
+                    //client.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    client.execute();
                     initiated = true;
                 }
             });

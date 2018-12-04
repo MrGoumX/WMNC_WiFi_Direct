@@ -2,9 +2,12 @@ package gr.aueb.wmnc.wifidirecttransfer.chat.client;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import java.net.Socket;
 import java.io.ObjectOutputStream;
@@ -13,27 +16,28 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Random;
 
+import gr.aueb.wmnc.wifidirecttransfer.R;
 import gr.aueb.wmnc.wifidirecttransfer.chat.MemberData;
+import gr.aueb.wmnc.wifidirecttransfer.chat.Message;
 import gr.aueb.wmnc.wifidirecttransfer.chat.MessageAdapter;
 
-public class SimpleChatClient extends Service
+public class SimpleChatClient extends AsyncTask<Void, Void, Void>
 {
     private Socket csocket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private ClientActionListener listener;
+    private ImageButton send;
+    private EditText chat;
     private View view;
     private String name;
     private String ip;
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    public void initiate(){
+    protected Void doInBackground(Void... voids) {
         try{
             csocket = new Socket(ip, 4203);
+            System.out.println("CONNECTED");
             out = new ObjectOutputStream(csocket.getOutputStream());
             in = new ObjectInputStream(csocket.getInputStream());
             out.writeObject(name);
@@ -43,12 +47,26 @@ public class SimpleChatClient extends Service
         } catch (IOException e) {
             e.printStackTrace();
         }
-        MessageAdapter adapter = new MessageAdapter(getApplicationContext());
-        MemberData memberData = new MemberData(name, generateColor(new Random()));
+        final MessageAdapter adapter = new MessageAdapter(view.getContext());
+        final MemberData memberData = new MemberData(name, generateColor(new Random()));
 
-        ServerController inputHandler = new ServerController(in, adapter);
-        inputHandler.execute();
-        listener = new ClientActionListener(out, view, memberData, adapter);
+        ServerController inputHandler = new ServerController(csocket, adapter);
+        inputHandler.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        send = (ImageButton) view.findViewById(R.id.send);
+        chat = (EditText) view.findViewById(R.id.chat_box);
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String temp = chat.getText().toString();
+                final Message message = new Message(temp, memberData, false);
+                listener = new ClientActionListener(out);
+                listener.execute(message);
+                chat.getText().clear();
+                message.setOur(true);
+                adapter.add(message);
+            }
+        });
+        return null;
     }
 
     public void setName(String name){
@@ -77,9 +95,4 @@ public class SimpleChatClient extends Service
         return new String(s);
     }
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
 }

@@ -59,6 +59,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
     private boolean isOwner = false;
     private static boolean isInitialized = false;
     private InetAddress owner;
+    private WifiP2pDnsSdServiceInfo serviceInfo;
 
     private static WiFiDirectReceiver instance = null;
     public static boolean connected = false;
@@ -241,7 +242,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
 
             }
         });
-        WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("WMNC" + currentName, "_presence._tcp", record);
+        serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("WMNC" + currentName, "_presence._tcp", record);
         mManager.addLocalService(mChannel, serviceInfo, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -263,6 +264,17 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
         mManager.clearLocalServices(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(int i) {
+
+            }
+        });
+        mManager.removeLocalService(mChannel, serviceInfo, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
                 Toast.makeText(mActivity.getApplicationContext(), "Service Destroyed", Toast.LENGTH_SHORT).show();
             }
 
@@ -272,6 +284,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
             }
         });
         hasService = false;
+        connected = false;
     }
 
     public void onResume(){
@@ -337,7 +350,7 @@ public class WiFiDirectReceiver extends BroadcastReceiver implements postConnect
     }
 
     public void disconnect(){
-        if(connected){
+        if(connected && isInitialized){
             mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
                 @Override
                 public void onSuccess() {

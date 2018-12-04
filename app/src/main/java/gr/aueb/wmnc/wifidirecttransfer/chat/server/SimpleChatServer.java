@@ -21,7 +21,7 @@ public class SimpleChatServer extends AsyncTask<Void, Void, Void> {
             System.out.println("server started.\nWaiting for connections...");
             while (true) {
                 ConnectionController temp = new ConnectionController(ssocket.accept(), connections);
-                temp.execute();
+                temp.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         }
         catch (IOException ioe) {

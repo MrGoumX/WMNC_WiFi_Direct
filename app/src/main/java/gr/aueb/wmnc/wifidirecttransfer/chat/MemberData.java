@@ -1,6 +1,8 @@
 package gr.aueb.wmnc.wifidirecttransfer.chat;
 
-public class MemberData {
+import java.io.Serializable;
+
+public class MemberData implements Serializable{
     public String name;
     public String color;
 

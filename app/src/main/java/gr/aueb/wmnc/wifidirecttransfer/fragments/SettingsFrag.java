@@ -39,7 +39,7 @@ public class SettingsFrag extends Fragment{
         listView = (ListView)view.findViewById(R.id.device_list);
         listView2 = (ListView)view.findViewById(R.id.service_list);
 
-        wiFiDirectReceiver = ((DrawerMain)getActivity()).getWiFiDirectReceiver();
+        wiFiDirectReceiver = WiFiDirectReceiver.getInstance();
 
         this.activity = getActivity();
 
