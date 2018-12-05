@@ -2,6 +2,7 @@ package gr.aueb.wmnc.wifidirecttransfer.filetrans;
 
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.support.v4.app.NotificationCompat;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -14,7 +15,9 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Receive extends AsyncTask<Object, Void, Void> {
+import gr.aueb.wmnc.wifidirecttransfer.R;
+
+public class Receive extends AsyncTask<Object, Void, Boolean> {
     private static final int size = 1024*1024;
 
     private ServerSocket server = null;
@@ -24,7 +27,7 @@ public class Receive extends AsyncTask<Object, Void, Void> {
     private int port = 4300;
 
     @Override
-    protected Void doInBackground(Object... params) {
+    protected Boolean doInBackground(Object... params) {
         storePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString();
         try {
             startServer(port);
@@ -44,7 +47,13 @@ public class Receive extends AsyncTask<Object, Void, Void> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return true;
+    }
+
+    @Override
+    protected void onPostExecute(Boolean aBoolean) {
+        FileNotification.notifyUser();
+        super.onPostExecute(aBoolean);
     }
 
     private void openFile(String path, String name){
@@ -75,6 +84,7 @@ public class Receive extends AsyncTask<Object, Void, Void> {
         }
         bos.flush();
         System.out.println("Transfer Complete.");
+
 
         if(fos!=null)fos.close();
         if(bos!=null)bos.close();

@@ -1,13 +1,22 @@
 package gr.aueb.wmnc.wifidirecttransfer;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,8 +27,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import gr.aueb.wmnc.wifidirecttransfer.chat.client.Color;
 import gr.aueb.wmnc.wifidirecttransfer.chat.server.SimpleChatServer;
 import gr.aueb.wmnc.wifidirecttransfer.connections.phonesIps;
+import gr.aueb.wmnc.wifidirecttransfer.filetrans.FileNotification;
 import gr.aueb.wmnc.wifidirecttransfer.fragments.ChatFrag;
 import gr.aueb.wmnc.wifidirecttransfer.fragments.FileTransFrag;
 import gr.aueb.wmnc.wifidirecttransfer.fragments.InfoFrag;
@@ -87,6 +98,8 @@ public class DrawerMain extends AppCompatActivity implements NavigationView.OnNa
 
         wiFiDirectReceiver = WiFiDirectReceiver.getInstance();
         wiFiDirectReceiver.initialize(this);
+
+        FileNotification fileNotification = new FileNotification(this);
 
         startService(new Intent(this, UIService.class));
     }
