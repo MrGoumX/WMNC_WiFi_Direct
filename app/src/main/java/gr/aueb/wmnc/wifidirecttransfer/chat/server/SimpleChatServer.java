@@ -49,8 +49,8 @@ public class SimpleChatServer extends AsyncTask<Object, Void, Void>{
         final MemberData memberData = new MemberData(name, Color.generateColor(new Random()));
         try{
             serverSocket = new ServerSocket(4203);
+            socket = serverSocket.accept();
             while(true){
-                socket = serverSocket.accept();
                 try{
                     out = new ObjectOutputStream(socket.getOutputStream());
                     in = new ObjectInputStream(socket.getInputStream());
