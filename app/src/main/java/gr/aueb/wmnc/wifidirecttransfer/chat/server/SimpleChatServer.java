@@ -50,42 +50,40 @@ public class SimpleChatServer extends AsyncTask<Object, Void, Void>{
         try{
             serverSocket = new ServerSocket(4203);
             socket = serverSocket.accept();
-            while(true){
-                try{
-                    out = new ObjectOutputStream(socket.getOutputStream());
-                    in = new ObjectInputStream(socket.getInputStream());
-                    send.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            String temp = chat.getText().toString();
-                            final Message message = new Message(temp, memberData, false);
-                            SendMessage sM = new SendMessage();
-                            sM.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, out, message);
-                            synchronized (adapter){
-                                message.setOur(true);
-                                mActivity.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        adapter.add(message);
-                                        adapter.notifyDataSetChanged();
-                                    }
-                                });
-                                chat.getText().clear();
-                            }
-                        }
-                    });
-
-                    while((d = (Message) in.readObject()) != null){
+            try{
+                out = new ObjectOutputStream(socket.getOutputStream());
+                in = new ObjectInputStream(socket.getInputStream());
+                send.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String temp = chat.getText().toString();
+                        final Message message = new Message(temp, memberData, false);
+                        SendMessage sM = new SendMessage();
+                        sM.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, out, message);
                         synchronized (adapter){
-                            System.out.println(d.getMessage());
-                            ReceiveMessage receiveMessage = new ReceiveMessage();
-                            receiveMessage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, d);
+                            message.setOur(true);
+                            mActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    adapter.add(message);
+                                    adapter.notifyDataSetChanged();
+                                }
+                            });
+                            chat.getText().clear();
                         }
                     }
+                });
+
+                while((d = (Message) in.readObject()) != null){
+                    synchronized (adapter){
+                        System.out.println(d.getMessage());
+                        ReceiveMessage receiveMessage = new ReceiveMessage();
+                        receiveMessage.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, adapter, d);
+                    }
                 }
-                catch (IOException | ClassNotFoundException e){
-                    e.printStackTrace();
-                }
+            }
+            catch (IOException | ClassNotFoundException e){
+                e.printStackTrace();
             }
 
         }
